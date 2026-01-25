@@ -1,0 +1,17 @@
+export enum Condition {
+  ALL = "ALL",
+
+  EQUAL = "EQUAL",
+  NOT_EQUAL = "NOT_EQUAL",
+
+  GREATER_THAN = "GREATER_THAN",
+  GREATER_OR_EQUAL = "GREATER_OR_EQUAL",
+  LESS_THAN = "LESS_THAN",
+  LESS_OR_EQUAL = "LESS_OR_EQUAL",
+
+  LIKE = "LIKE",
+  STARTS_WITH = "STARTS_WITH",
+  ENDS_WITH = "ENDS_WITH",
+
+  IN = "IN",
+}
