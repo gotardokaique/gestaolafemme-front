@@ -1,5 +1,3 @@
-// src/services/authService.ts (ou onde você estiver usando)
-
 export type LoginInput = {
   email: string
   password: string
