@@ -52,11 +52,11 @@ const data = {
       items: [
         {
           title: "Fornecedores",
-          url: "#",
+          url: "/fornecedor",
         },
         {
           title: "Clientes",
-          url: "#",
+          url: "/cliente",
         },
         {
           title: "Settings",
