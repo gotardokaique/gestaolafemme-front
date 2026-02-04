@@ -13,10 +13,10 @@ export type Fornecedor = z.infer<typeof FornecedorSchema>
 export const FornecedorListSchema = z.array(FornecedorSchema)
 
 export const FornecedorCreateSchema = z.object({
-  nome: z.string(),
-  telefone: z.string(),
-  email: z.string(),
-  ativo: z.boolean().default(true),
+  nome: z.string().min(1, "Nome é obrigatório"),
+  telefone: z.string().optional().nullable(),
+  email: z.string().email("Email inválido").optional().nullable().or(z.literal("")),
+  ativo: z.boolean().optional(),
 })
 
 export type FornecedorCreateDTO = z.infer<typeof FornecedorCreateSchema>

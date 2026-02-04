@@ -1,6 +1,9 @@
 "use client"
 
 import * as React from "react"
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+
 import { toast } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,7 +20,11 @@ import {
 import { Switch } from "@/components/ui/switch"
 
 import { fornecedorApi } from "@/services/fornecedor/fornecedor.api"
-import { FornecedorUpdateSchema, type Fornecedor, type FornecedorUpdateDTO } from "@/services/fornecedor/fornecedor.schemas"
+import {
+  FornecedorUpdateSchema,
+  type Fornecedor,
+  type FornecedorUpdateDTO,
+} from "@/services/fornecedor/fornecedor.schemas"
 
 type Props = {
   fornecedor: Fornecedor
@@ -26,42 +33,45 @@ type Props = {
 
 export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
   const [open, setOpen] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
 
-  const [form, setForm] = React.useState<FornecedorUpdateDTO>({
-    nome: fornecedor.nome,
-    telefone: fornecedor.telefone ?? "",
-    email: fornecedor.email ?? "",
-    ativo: fornecedor.ativo,
-  })
-
-  React.useEffect(() => {
-    if (!open) return
-    setForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { isSubmitting, errors },
+  } = useForm<FornecedorUpdateDTO>({
+    resolver: zodResolver(FornecedorUpdateSchema),
+    defaultValues: {
       nome: fornecedor.nome,
       telefone: fornecedor.telefone ?? "",
       email: fornecedor.email ?? "",
       ativo: fornecedor.ativo,
-    })
-  }, [open, fornecedor])
+    },
+  })
 
-  function setField<K extends keyof FornecedorUpdateDTO>(k: K, v: FornecedorUpdateDTO[K]) {
-    setForm((p) => ({ ...p, [k]: v }))
-  }
+  // Sincroniza o form quando o fornecedor muda ou o sheet abre
+  React.useEffect(() => {
+    if (open) {
+      reset({
+        nome: fornecedor.nome,
+        telefone: fornecedor.telefone ?? "",
+        email: fornecedor.email ?? "",
+        ativo: fornecedor.ativo,
+      })
+    }
+  }, [open, fornecedor, reset])
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
+  const onSubmit = async (data: FornecedorUpdateDTO) => {
     try {
-      const dto = FornecedorUpdateSchema.parse(form)
-      await fornecedorApi.update(fornecedor.id, dto)
-      toast.success("Fornecedor atualizado com sucesso.")
+      const res = await fornecedorApi.update(fornecedor.id, data)
+
       setOpen(false)
+      toast.success(res.message || "Fornecedor atualizado com sucesso!")
       onUpdated()
     } catch (err: any) {
+      console.error("[EditFornecedor]", err)
       toast.error(err?.message ?? "Não foi possível atualizar o fornecedor.")
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -73,30 +83,24 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
         </Button>
       </SheetTrigger>
 
-      <SheetContent>
+      <SheetContent className="sheet-content-standard">
         <SheetHeader>
           <SheetTitle>Editar fornecedor</SheetTitle>
           <SheetDescription>Atualize as informações do fornecedor.</SheetDescription>
         </SheetHeader>
 
-        <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <Label htmlFor={`fornecedor-nome-${fornecedor.id}`}>Nome</Label>
-            <Input
-              id={`fornecedor-nome-${fornecedor.id}`}
-              value={form.nome}
-              onChange={(e) => setField("nome", e.target.value)}
-              required
-            />
+            <Input id={`fornecedor-nome-${fornecedor.id}`} {...register("nome")} />
+            {errors.nome && (
+              <p className="text-sm text-destructive">{errors.nome.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor={`fornecedor-telefone-${fornecedor.id}`}>Telefone</Label>
-            <Input
-              id={`fornecedor-telefone-${fornecedor.id}`}
-              value={form.telefone ?? ""}
-              onChange={(e) => setField("telefone", e.target.value)}
-            />
+            <Input id={`fornecedor-telefone-${fornecedor.id}`} {...register("telefone")} />
           </div>
 
           <div className="space-y-2">
@@ -104,9 +108,11 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
             <Input
               id={`fornecedor-email-${fornecedor.id}`}
               type="email"
-              value={form.email ?? ""}
-              onChange={(e) => setField("email", e.target.value)}
+              {...register("email")}
             />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="flex items-center justify-between rounded-md border p-3">
@@ -116,12 +122,18 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
                 Define se o fornecedor está ativo.
               </p>
             </div>
-            <Switch checked={!!form.ativo} onCheckedChange={(v) => setField("ativo", v)} />
+            <Controller
+              name="ativo"
+              control={control}
+              render={({ field }) => (
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              )}
+            />
           </div>
 
           <SheetFooter>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Salvando..." : "Salvar"}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Salvando..." : "Salvar"}
             </Button>
           </SheetFooter>
         </form>
@@ -129,3 +141,4 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
     </Sheet>
   )
 }
+

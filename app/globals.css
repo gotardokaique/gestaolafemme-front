@@ -123,3 +123,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+}
+
+.sheet-content-standard {
+  width: 100% !important;
+  max-width: 100vw !important;
+}
+
+@media (min-width: 640px) {
+  .sheet-content-standard {
+    width: 780px !important;
+    max-width: 780px !important;
+  }
+}

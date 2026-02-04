@@ -17,6 +17,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { Separator } from "@radix-ui/react-separator"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "sonner"
 
 export default function PrivateLayout({
   children,
@@ -64,7 +65,9 @@ export default function PrivateLayout({
           </div>
           <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
         </div>
+        <Toaster />
       </SidebarInset>
     </SidebarProvider>
+    
   )
 }

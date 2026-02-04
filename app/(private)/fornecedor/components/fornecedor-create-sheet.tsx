@@ -1,6 +1,9 @@
 "use client"
 
 import * as React from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+
 import { toast } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,88 +18,91 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
+import {
+  FornecedorCreateSchema,
+  type FornecedorCreateDTO,
+} from "@/services/fornecedor/fornecedor.schemas"
 import { fornecedorApi } from "@/services/fornecedor/fornecedor.api"
-import { FornecedorCreateSchema, type FornecedorCreateDTO } from "@/services/fornecedor/fornecedor.schemas"
 
 type Props = { onCreated: () => void }
 
 export function FornecedorCreateSheet({ onCreated }: Props) {
   const [open, setOpen] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
 
-  const [form, setForm] = React.useState<FornecedorCreateDTO>({
-    nome: "",
-    telefone: "",
-    email: "",
-    ativo: true,
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting, errors },
+  } = useForm<FornecedorCreateDTO>({
+    resolver: zodResolver(FornecedorCreateSchema),
+    defaultValues: {
+      nome: "",
+      telefone: "",
+      email: "",
+      ativo: true,
+    },
   })
 
-  function setField<K extends keyof FornecedorCreateDTO>(k: K, v: FornecedorCreateDTO[K]) {
-    setForm((p) => ({ ...p, [k]: v }))
-  }
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
+  const onSubmit = async (formData: FornecedorCreateDTO) => {
     try {
-      const dto = FornecedorCreateSchema.parse(form)
-      await fornecedorApi.create(dto)
-      toast.success("Fornecedor cadastrado com sucesso.")
+      const res = await fornecedorApi.create(formData)
+
       setOpen(false)
-      setForm({ nome: "", telefone: "", email: "", ativo: true })
+      
+      const successMsg = (res as any)?.message
+      toast.success(successMsg)
+      
       onCreated()
     } catch (err: any) {
-      toast.error(err?.message ?? "Não foi possível cadastrar o fornecedor.")
-    } finally {
-      setLoading(false)
+      console.error("[CreateFornecedor]", err)
+      toast.error(err?.message ?? "Erro ao cadastrar fornecedor.")
     }
-  }
+  } 
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v)
+        if (!v) reset()
+      }}
+    >
       <SheetTrigger asChild>
         <Button>Adicionar fornecedor</Button>
       </SheetTrigger>
 
-      <SheetContent>
+      {/* ~50% maior */}
+      <SheetContent className="sheet-content-standard">
         <SheetHeader>
           <SheetTitle>Novo fornecedor</SheetTitle>
-          <SheetDescription>Preencha os dados para cadastrar um fornecedor.</SheetDescription>
+          <SheetDescription>
+            Preencha os dados para cadastrar um fornecedor.
+          </SheetDescription>
         </SheetHeader>
 
-        <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
-            <Label htmlFor="fornecedor-nome">Nome</Label>
-            <Input
-              id="fornecedor-nome"
-              value={form.nome}
-              onChange={(e) => setField("nome", e.target.value)}
-              required
-            />
+            <Label>Nome</Label>
+            <Input {...register("nome")} />
+            {errors.nome && (
+              <p className="text-sm text-destructive">{errors.nome.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="fornecedor-telefone">Telefone</Label>
-            <Input
-              id="fornecedor-telefone"
-              value={form.telefone ?? ""}
-              onChange={(e) => setField("telefone", e.target.value)}
-            />
+            <Label>Telefone</Label>
+            <Input {...register("telefone")} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="fornecedor-email">Email</Label>
-            <Input
-              id="fornecedor-email"
-              type="email"
-              value={form.email ?? ""}
-              onChange={(e) => setField("email", e.target.value)}
-            />
+            <Label>Email</Label>
+            <Input type="email" {...register("email")} />
           </div>
 
           <SheetFooter>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Salvando..." : "Salvar"}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Salvando..." : "Salvar"}
             </Button>
           </SheetFooter>
         </form>

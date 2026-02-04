@@ -1,3 +1,6 @@
+import { z } from "zod"
+import { api } from "@/lib/api"
+
 export type LoginInput = {
   email: string
   password: string
@@ -9,7 +12,6 @@ export type LoginResponse = {
 
 export class AuthServiceError extends Error {
   status?: number
-
   constructor(message: string, status?: number) {
     super(message)
     this.name = "AuthServiceError"
@@ -17,71 +19,33 @@ export class AuthServiceError extends Error {
   }
 }
 
-const defaultErrorMessage = "Erro desconhecido"
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL
-
-function assertApiUrl() {
-  if (!API_URL) {
-    throw new Error("NEXT_PUBLIC_API_URL não configurada.")
-  }
-}
-
-const parseErrorMessage = async (response: Response): Promise<string> => {
-  const contentType = response.headers.get("content-type") || ""
-
-  if (contentType.includes("application/json")) {
-    const data = await response.json().catch(() => null)
-
-    // back pode devolver só string
-    if (typeof data === "string") {
-      return data
-    }
-
-    // padrão que você usa: { "message": "..." }
-    if (data?.message) {
-      return data.message
-    }
-
-    if (response.status === 401) {
-      return "Usuário ou senha inválidos."
-    }
-
-    return defaultErrorMessage
-  }
-
-  const text = await response.text().catch(() => "")
-
-  if (text) {
-    return text
-  }
-
-  if (response.status === 401) {
-    return "Usuário ou senha inválidos."
-  }
-
-  return defaultErrorMessage
-}
+const LoginDataSchema = z.object({
+  token: z.string().min(10),
+})
 
 export const login = async (input: LoginInput): Promise<LoginResponse> => {
-  assertApiUrl()
+  try {
+    const res = await api.post("/auth/login", {
+      skipAuth: true,
+      dataSchema: LoginDataSchema,
+      body: {
+        email: input.email,
+        senha: input.password,
+      },
+    })
 
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: input.email,
-      senha: input.password, // alinhado com LoginRequestDTO(email, senha)
-    }),
-  })
+    // res é o envelope: { success, message, data }
+    const token = res.data?.token
+    if (!token) throw new AuthServiceError("Token não retornado no login.", 500)
 
-  if (!response.ok) {
-    const message = await parseErrorMessage(response)
-    throw new AuthServiceError(message, response.status)
+    return { token }
+  } catch (err: any) {
+    // seu api.ts lança ApiError em erro HTTP / success=false
+    const msg = err?.message ?? "Erro desconhecido"
+    const status = err?.status
+    throw new AuthServiceError(
+      status === 401 ? "Usuário ou senha inválidos." : msg,
+      status
+    )
   }
-
-  // LoginResponseDTO(token)
-  return response.json()
 }
