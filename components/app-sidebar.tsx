@@ -71,13 +71,20 @@ const data = {
       items: [
         {
           title: "Estoque",
-          url: "#",
+          url: "/estoque",
+        },
+        {
+          title: "Categorias de Produtos",
+          url: "/categoria-produto",
         },
         {
           title: "Produtos",
-          url: "#",
+          url: "/produto",
         },
-
+        {
+          title: "Compras",
+          url: "/compra",
+        },
       ],
     },
     {
@@ -86,12 +93,8 @@ const data = {
       icon: BookOpen,
       items: [
         {
-          title: "Compras",
-          url: "#",
-        },
-        {
           title: "Vendas",
-          url: "#",
+          url: "/venda",
         },
         {
           title: "Dashboard",
@@ -99,7 +102,7 @@ const data = {
         },
         {
           title: "Movimentações do Estoque",
-          url: "#",
+          url: "/movimentacao-estoque",
         },
       ],
     },

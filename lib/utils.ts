@@ -35,3 +35,18 @@ export function formatCpfCnpj(value: string | number | null | undefined): string
   // CNPJ: XX.XXX.XXX/XXXX-XX
   return str.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5")
 }
+
+export function formatCurrency(value: number | string | null | undefined): string {
+  if (value === null || value === undefined) return "R$ 0,00"
+  const amount = typeof value === "string" ? parseFloat(value) : value
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(amount)
+}
+
+export function formatDateBR(date: Date | string | null | undefined): string {
+  if (!date) return "-"
+  const d = typeof date === "string" ? new Date(date) : date
+  return new Intl.DateTimeFormat("pt-BR").format(d)
+}
