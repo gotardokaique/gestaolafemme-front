@@ -97,6 +97,10 @@ const data = {
           url: "/venda",
         },
         {
+          title: "Finanças",
+          url: "/financeiro",
+        },
+        {
           title: "Dashboard",
           url: "#",
         },
