@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Gem } from "lucide-react"
+import { Eye, EyeOff, Gem } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,10 +15,12 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
 import { AuthServiceError, login } from "@/services/authservice"
 import { useRouter } from "next/navigation"
+import { Card } from "./ui/card"
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
+  const [showPassword, setShowPassword] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
 
   const router = useRouter()
@@ -29,8 +31,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
     setIsLoading(true)
     try {
-const { token } = await login({ email, password })
-localStorage.setItem("token", token)
+      const { token } = await login({ email, password })
+      localStorage.setItem("token", token)
 
       toast.success("Login realizado com sucesso!")
       router.push("/home")
@@ -46,7 +48,7 @@ localStorage.setItem("token", token)
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <Card className={cn("flex flex-col gap-6 p-2", className)} {...props}>
       <form onSubmit={handleSubmitLogin}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
@@ -79,17 +81,28 @@ localStorage.setItem("token", token)
 
           <Field>
             <FieldLabel htmlFor="password">Senha</FieldLabel>
-            <Input
-              className="border-[2px] border-gray-300"
-              id="password"
-              type="password"
-              placeholder="Sua senha"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-              autoComplete="current-password"
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <Input
+                className="border-[2px] border-gray-300 pr-10"
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Sua senha"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                autoComplete="current-password"
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                className="text-muted-foreground hover:text-foreground absolute right-2 top-1/2 -translate-y-1/2"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                disabled={isLoading}
+              >
+                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
+            </div>
           </Field>
 
           <Field>
@@ -98,9 +111,9 @@ localStorage.setItem("token", token)
             </Button>
           </Field>
 
-          <FieldSeparator>Or</FieldSeparator>
+          {/* <FieldSeparator className="bg-none">Or</FieldSeparator> */}
 
-          <Field className="grid gap-4 sm:grid-cols-2">
+          {/* <Field className="grid gap-4 sm:grid-cols-2">
             <Button
               variant="outline"
               type="button"
@@ -130,7 +143,7 @@ localStorage.setItem("token", token)
               </svg>
               Entre com Google
             </Button>
-          </Field>
+          </Field> */}
         </FieldGroup>
       </form>
 
@@ -139,6 +152,6 @@ localStorage.setItem("token", token)
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
 
-    </div>
+    </Card>
   )
 }

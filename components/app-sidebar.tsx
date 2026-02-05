@@ -41,7 +41,7 @@ const data = {
       logo: UserRoundCheck,
       plan: "Desde de 2026",
     },
-    
+
   ],
   navMain: [
     {
@@ -77,7 +77,7 @@ const data = {
           title: "Produtos",
           url: "#",
         },
-        
+
       ],
     },
     {
@@ -109,8 +109,8 @@ const data = {
       icon: Settings2,
       items: [
         {
-          title: "General",
-          url: "#",
+          title: "Geral",
+          url: "/configuracoes",
         },
         {
           title: "Team",

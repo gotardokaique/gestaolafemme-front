@@ -34,10 +34,8 @@ export const login = async (input: LoginInput): Promise<LoginResponse> => {
       },
     })
 
-    // res é o envelope: { success, message, data }
     const token = res.data?.token
     if (!token) throw new AuthServiceError("Token não retornado no login.", 500)
-
     return { token }
   } catch (err: any) {
     // seu api.ts lança ApiError em erro HTTP / success=false

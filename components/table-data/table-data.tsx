@@ -1,4 +1,3 @@
-"use client"
 
 import * as React from "react"
 import { ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -38,8 +37,8 @@ export type TableDataColumnProps<TData> = {
 
 type TableDataColumnsProps<TData> = {
   children:
-    | React.ReactElement<TableDataColumnProps<TData>>
-    | Array<React.ReactElement<TableDataColumnProps<TData>>>
+  | React.ReactElement<TableDataColumnProps<TData>>
+  | Array<React.ReactElement<TableDataColumnProps<TData>>>
 }
 
 export type TableDataTabProps<TData> = {
@@ -55,8 +54,8 @@ type TableDataTabsProps<TData> = {
   onActiveKeyChange?: (key: string) => void
   defaultKey?: string
   children:
-    | React.ReactElement<TableDataTabProps<TData>>
-    | Array<React.ReactElement<TableDataTabProps<TData>>>
+  | React.ReactElement<TableDataTabProps<TData>>
+  | Array<React.ReactElement<TableDataTabProps<TData>>>
 }
 
 /** SERVER FILTER: configurado no JSX, renderizado em modal */
@@ -72,8 +71,8 @@ export type TableDataFilterProps<TData> = {
 type TableDataFiltersProps<TData> = {
   title?: string
   children:
-    | React.ReactElement<TableDataFilterProps<TData>>
-    | Array<React.ReactElement<TableDataFilterProps<TData>>>
+  | React.ReactElement<TableDataFilterProps<TData>>
+  | Array<React.ReactElement<TableDataFilterProps<TData>>>
 }
 
 export type FilterItem = {
@@ -117,37 +116,37 @@ const TABLEDATA_FILTER = "TableData.Filter"
 function Columns<TData>(_props: TableDataColumnsProps<TData>) {
   return null
 }
-;(Columns as any).__TABLEDATA_TYPE = TABLEDATA_COLUMNS
+; (Columns as any).__TABLEDATA_TYPE = TABLEDATA_COLUMNS
 Columns.displayName = TABLEDATA_COLUMNS
 
 function Column<TData>(_props: TableDataColumnProps<TData>) {
   return null
 }
-;(Column as any).__TABLEDATA_TYPE = TABLEDATA_COLUMN
+; (Column as any).__TABLEDATA_TYPE = TABLEDATA_COLUMN
 Column.displayName = TABLEDATA_COLUMN
 
 function Tabs<TData>(_props: TableDataTabsProps<TData>) {
   return null
 }
-;(Tabs as any).__TABLEDATA_TYPE = TABLEDATA_TABS
+; (Tabs as any).__TABLEDATA_TYPE = TABLEDATA_TABS
 Tabs.displayName = TABLEDATA_TABS
 
 function Tab<TData>(_props: TableDataTabProps<TData>) {
   return null
 }
-;(Tab as any).__TABLEDATA_TYPE = TABLEDATA_TAB
+; (Tab as any).__TABLEDATA_TYPE = TABLEDATA_TAB
 Tab.displayName = TABLEDATA_TAB
 
 function Filters<TData>(_props: TableDataFiltersProps<TData>) {
   return null
 }
-;(Filters as any).__TABLEDATA_TYPE = TABLEDATA_FILTERS
+; (Filters as any).__TABLEDATA_TYPE = TABLEDATA_FILTERS
 Filters.displayName = TABLEDATA_FILTERS
 
 function Filter<TData>(_props: TableDataFilterProps<TData>) {
   return null
 }
-;(Filter as any).__TABLEDATA_TYPE = TABLEDATA_FILTER
+; (Filter as any).__TABLEDATA_TYPE = TABLEDATA_FILTER
 Filter.displayName = TABLEDATA_FILTER
 
 /** ===================== INTERNAL HELPERS ===================== */
@@ -487,9 +486,13 @@ function TableDataInner<TData>({
               const key = tabsExtracted.keys[i]
               const count = tabCounts[key] ?? 0
               return (
-                <TabsTrigger key={key} value={key} className="gap-2 px-4">
+                <TabsTrigger
+                  key={key}
+                  value={key}
+                  className="gap-2 px-4 data-[state=active]:bg-gray-400/70 data-[state=active]:border-border dark:data-[state=active]:bg-input/30 dark:data-[state=active]:border-input"
+                >
                   {t.props.label}
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground px-1">
+                  <span className="flex h-4 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground px-1">
                     {count}
                   </span>
                 </TabsTrigger>

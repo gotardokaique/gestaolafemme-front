@@ -259,16 +259,22 @@ async function request<TDataSchema extends z.ZodTypeAny | undefined, TData = unk
       throw new ApiError(msg, res.status, parsed, { url, method })
     }
 
-    // sucesso HTTP: valida envelope padrão
     const envelopeSchema = ApiEnvelopeSchema(opts.dataSchema ?? z.any())
-    const env = envelopeSchema.parse(parsed) as ApiEnvelope<any>
-
-    // sucesso HTTP mas business fail
-    if (!env.success) {
-      throw new ApiError(env.message ?? "Erro.", res.status, env, { url, method })
+    const envSafe = envelopeSchema.safeParse(parsed)
+    if (envSafe.success) {
+      const env = envSafe.data as ApiEnvelope<any>
+      if (!env.success) {
+        throw new ApiError(env.message ?? "Erro.", res.status, env, { url, method })
+      }
+      return env as any
     }
 
-    return env as any
+    if (opts.dataSchema) {
+      const data = opts.dataSchema.parse(parsed) as any
+      return { success: true, message: null, data } as any
+    }
+
+    return { success: true, message: null, data: parsed as any } as any
   } catch (err: any) {
     if (err?.name === "AbortError") {
       throw new ApiError("Requisição cancelada.", 499, undefined, { url, method })
