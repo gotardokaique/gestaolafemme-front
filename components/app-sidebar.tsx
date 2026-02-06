@@ -54,14 +54,14 @@ const data = {
           title: "Fornecedores",
           url: "/fornecedor",
         },
-        {
-          title: "Clientes",
-          url: "/cliente",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
+        // {
+        //   title: "Clientes",
+        //   url: "/cliente",
+        // },
+        // {
+        //   title: "Settings",
+        //   url: "#",
+        // },
       ],
     },
     {
@@ -102,7 +102,7 @@ const data = {
         },
         {
           title: "Dashboard",
-          url: "#",
+          url: "/dashboard",
         },
         {
           title: "Movimentações do Estoque",
@@ -119,41 +119,61 @@ const data = {
           title: "Geral",
           url: "/configuracoes",
         },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
+        // {
+        //   title: "Team",
+        //   url: "#",
+        // },
+        // {
+        //   title: "Billing",
+        //   url: "#",
+        // },
+        // {
+        //   title: "Limits",
+        //   url: "#",
+        // },
       ],
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+  // projects: [
+  //   {
+  //     name: "Design Engineering",
+  //     url: "#",
+  //     icon: Frame,
+  //   },
+  //   {
+  //     name: "Sales & Marketing",
+  //     url: "#",
+  //     icon: PieChart,
+  //   },
+  //   {
+  //     name: "Travel",
+  //     url: "#",
+  //     icon: Map,
+  //   },
+  // ],
 }
 
+import { userApi } from "@/services/user/user.api"
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = React.useState({
+    name: "Usuário",
+    email: "...",
+    avatar: "",
+  })
+
+  React.useEffect(() => {
+    userApi.getMe().then((u) => {
+      setUser({
+        name: u.nome,
+        email: u.email,
+        avatar: "",
+      })
+    }).catch(() => {
+      // Ignorar erro, mantém default
+    })
+  }, [])
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -161,10 +181,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
