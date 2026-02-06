@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Building, Mail, User, UserCheck, UserCog } from "lucide-react"
+import { Building, Mail, User, UserCheck, UserCog, Settings2 } from "lucide-react"
 
 const UserMeSchema = z.object({
   id: z.number(),
@@ -53,10 +53,15 @@ export default function ConfiguracoesPage() {
   return (
     <div className=" gap-6">
       <div className="flex-1">
-        <div className="flex flex-col gap-2">
-          <div className="text-2xl font-semibold">Configurações</div>
-          <div className="text-muted-foreground text-sm">
-            Gerencie seus dados de acesso e preferências.
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-slate-500/10 text-slate-500">
+            <Settings2 className="h-5 w-5" />
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <div className="text-2xl font-semibold">Configurações</div>
+            <div className="text-muted-foreground text-sm">
+              Gerencie seus dados de acesso e preferências.
+            </div>
           </div>
         </div>
       </div>

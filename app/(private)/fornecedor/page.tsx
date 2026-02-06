@@ -16,7 +16,7 @@ import { FornecedorCreateSheet } from "./components/fornecedor-create-sheet"
 import { FornecedorEditSheet } from "./components/fornecedor-edit-sheet"
 import { useFornecedoresTable } from "./components/use-fornecedores-table"
 
-import { User, Phone, Mail, BadgeCheck, BadgeX } from "lucide-react"
+import { User, Phone, Mail, BadgeCheck, BadgeX, Users } from "lucide-react"
 import { formatPhoneBR } from "@/lib/utils"
 
 export default function FornecedoresPage() {
@@ -33,9 +33,14 @@ export default function FornecedoresPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>Fornecedores</CardTitle>
-            <CardDescription>Cadastre e edite fornecedores.</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-blue-500/30 text-blue-500">
+              <Users className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>Fornecedores</CardTitle>
+              <CardDescription>Cadastre e edite fornecedores.</CardDescription>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -109,8 +114,8 @@ export default function FornecedoresPage() {
 
                   return (
                     <div className="flex items-start gap-3">
-                      <div className="h-10 w-10 shrink-0 rounded-full bg-muted flex items-center justify-center">
-                        <User className="h-5 w-5 text-muted-foreground" />
+                      <div className="h-10 w-10 shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                        <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
 
                       <div className="min-w-0 flex-1">

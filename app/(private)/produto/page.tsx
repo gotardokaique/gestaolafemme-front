@@ -44,9 +44,14 @@ export default function ProdutosPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>Produtos</CardTitle>
-            <CardDescription>Gerencie o catálogo de produtos e seus níveis de estoque.</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-purple-500/30 text-purple-500">
+              <Package className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>Produtos</CardTitle>
+              <CardDescription>Gerencie o catálogo de produtos e seus níveis de estoque.</CardDescription>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -74,8 +79,8 @@ export default function ProdutosPage() {
                 label="Produto"
                 render={(_, row) => (
                   <div className="flex items-start gap-3">
-                    <div className="mt-1 h-8 w-8 shrink-0 rounded bg-muted flex items-center justify-center">
-                      <Package className="h-4 w-4 text-muted-foreground" />
+                    <div className="mt-1 h-8 w-8 shrink-0 rounded bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                      <Package className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -154,7 +159,7 @@ export default function ProdutosPage() {
                         <Power className="mr-2 h-4 w-4" />
                         {row.ativo ? 'Desativar' : 'Ativar'}
                       </DropdownMenuItem>
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         className="text-destructive focus:text-destructive"
                         onClick={() => handleDelete(row.id)}
                       >
@@ -170,8 +175,8 @@ export default function ProdutosPage() {
         </CardContent>
       </Card>
 
-      <ProdutoEditSheet 
-        produto={editingProduto} 
+      <ProdutoEditSheet
+        produto={editingProduto}
         onOpenChange={(open) => !open && setEditingProduto(null)}
         onUpdated={reload}
       />

@@ -24,6 +24,7 @@ import {
   type Estoque,
 } from "@/services/estoque/estoque.schemas"
 import { estoqueApi } from "@/services/estoque/estoque.api"
+import { PackageCheck } from "lucide-react"
 
 type Props = {
   estoque: Estoque | null
@@ -68,10 +69,17 @@ export function EstoqueAjusteSheet({ estoque, open, onOpenChange, onUpdated }: P
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sheet-content-standard">
         <SheetHeader>
-          <SheetTitle>Ajustar Estoque</SheetTitle>
-          <SheetDescription>
-            Alteração manual de saldo para o produto <strong>{estoque?.produtoNome}</strong>.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-purple-500/10 text-purple-500">
+              <PackageCheck className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Ajustar Estoque</SheetTitle>
+              <SheetDescription>
+                Alteração manual de saldo para o produto <strong>{estoque?.produtoNome}</strong>.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>

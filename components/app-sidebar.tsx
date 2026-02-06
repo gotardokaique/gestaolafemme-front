@@ -48,42 +48,46 @@ const data = {
       title: "Pessoas",
       url: "#",
       icon: UserStar,
+      iconColor: "text-blue-500",
       isActive: true,
       items: [
         {
           title: "Fornecedores",
           url: "/fornecedor",
+          icon: "Users",
+          iconColor: "text-blue-500",
         },
-        // {
-        //   title: "Clientes",
-        //   url: "/cliente",
-        // },
-        // {
-        //   title: "Settings",
-        //   url: "#",
-        // },
       ],
     },
     {
       title: "Itens",
       url: "#",
       icon: AudioWaveform,
+      iconColor: "text-purple-500",
       items: [
         {
           title: "Estoque",
           url: "/estoque",
+          icon: "Warehouse",
+          iconColor: "text-purple-500",
         },
         {
           title: "Categorias de Produtos",
           url: "/categoria-produto",
+          icon: "Tags",
+          iconColor: "text-violet-500",
         },
         {
           title: "Produtos",
           url: "/produto",
+          icon: "Package",
+          iconColor: "text-purple-500",
         },
         {
           title: "Compras",
           url: "/compra",
+          icon: "ShoppingBag",
+          iconColor: "text-amber-500",
         },
       ],
     },
@@ -91,22 +95,31 @@ const data = {
       title: "Financeiro",
       url: "#",
       icon: BookOpen,
+      iconColor: "text-emerald-500",
       items: [
         {
           title: "Vendas",
           url: "/venda",
+          icon: "ShoppingCart",
+          iconColor: "text-emerald-500",
         },
         {
           title: "Finanças",
           url: "/financeiro",
+          icon: "Wallet",
+          iconColor: "text-emerald-500",
         },
         {
           title: "Dashboard",
           url: "/dashboard",
+          icon: "LayoutDashboard",
+          iconColor: "text-cyan-500",
         },
         {
           title: "Movimentações do Estoque",
           url: "/movimentacao-estoque",
+          icon: "ArrowLeftRight",
+          iconColor: "text-teal-500",
         },
       ],
     },
@@ -114,23 +127,14 @@ const data = {
       title: "Configurações",
       url: "#",
       icon: Settings2,
+      iconColor: "text-slate-500",
       items: [
         {
           title: "Geral",
           url: "/configuracoes",
+          icon: "Settings",
+          iconColor: "text-slate-500",
         },
-        // {
-        //   title: "Team",
-        //   url: "#",
-        // },
-        // {
-        //   title: "Billing",
-        //   url: "#",
-        // },
-        // {
-        //   title: "Limits",
-        //   url: "#",
-        // },
       ],
     },
   ],

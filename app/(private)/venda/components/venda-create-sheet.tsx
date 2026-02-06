@@ -36,6 +36,7 @@ import { vendaApi } from "@/services/venda/venda.api"
 import { produtoApi } from "@/services/produto/produto.api"
 import type { Produto } from "@/services/produto/produto.schemas"
 import { NumericInput } from "@/components/ui/numeric-input"
+import { ShoppingCart } from "lucide-react"
 
 type Props = { onCreated: () => void }
 
@@ -74,11 +75,11 @@ export function VendaCreateSheet({ onCreated }: Props) {
     }
   }, [open])
 
-  const selectedProduto = React.useMemo(() => 
+  const selectedProduto = React.useMemo(() =>
     produtos.find(p => p.id === selectedProdutoId),
     [produtos, selectedProdutoId]
   )
-  
+
   // Auto-fill valorTotal based on quantity and product price
   React.useEffect(() => {
     if (selectedProduto) {
@@ -112,10 +113,17 @@ export function VendaCreateSheet({ onCreated }: Props) {
 
       <SheetContent className="sheet-content-standard overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Nova Venda</SheetTitle>
-          <SheetDescription>
-            Registre uma nova venda no sistema.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
+              <ShoppingCart className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Nova Venda</SheetTitle>
+              <SheetDescription>
+                Registre uma nova venda no sistema.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4 pb-10" onSubmit={handleSubmit(onSubmit)}>
@@ -139,9 +147,9 @@ export function VendaCreateSheet({ onCreated }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Quantidade</Label>
-              <Input 
-                type="number" 
-                {...register("quantidade", { valueAsNumber: true })} 
+              <Input
+                type="number"
+                {...register("quantidade", { valueAsNumber: true })}
               />
               {errors.quantidade && (
                 <p className="text-sm text-destructive">{errors.quantidade.message}</p>
@@ -193,7 +201,7 @@ export function VendaCreateSheet({ onCreated }: Props) {
                 {selectedProduto ? `R$ ${selectedProduto.valorVenda.toFixed(2)}` : "-"}
               </span>
             </div>
-            
+
             <div className="space-y-2">
               <Label className="text-xs">Valor Total da Venda (Editável)</Label>
               <Controller

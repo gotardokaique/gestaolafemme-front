@@ -28,7 +28,7 @@ import {
 import { DatePicker } from "@/components/ui/date-picker"
 import { NumericInput } from "@/components/ui/numeric-input"
 import { financeiroApi, type LancamentoFinanceiroRequest } from "@/services/financeiro/financeiro.api"
-import { Plus } from "lucide-react"
+import { Plus, Wallet } from "lucide-react"
 
 const LancamentoSchema = z.object({
   descricao: z.string().min(1, "Descrição é obrigatória"),
@@ -88,10 +88,17 @@ export function LancamentoFinanceiroCreateSheet({ onCreated }: Props) {
 
       <SheetContent className="sheet-content-standard">
         <SheetHeader>
-          <SheetTitle>Novo Lançamento</SheetTitle>
-          <SheetDescription>
-            Registre uma entrada ou saída manual no financeiro.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
+              <Wallet className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Novo Lançamento</SheetTitle>
+              <SheetDescription>
+                Registre uma entrada ou saída manual no financeiro.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>

@@ -31,9 +31,14 @@ export default function CategoriasProdutoPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>Categorias de Produto</CardTitle>
-            <CardDescription>Cadastre e edite as categorias dos seus produtos.</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-violet-500/30 text-violet-500">
+              <Tags className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>Categorias de Produto</CardTitle>
+              <CardDescription>Cadastre e edite as categorias dos seus produtos.</CardDescription>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -91,8 +96,8 @@ export default function CategoriasProdutoPage() {
 
                   return (
                     <div className="flex items-start gap-4">
-                      <div className="h-10 w-10 shrink-0 rounded-full bg-muted flex items-center justify-center">
-                        <Tags className="h-5 w-5 text-muted-foreground" />
+                      <div className="h-10 w-10 shrink-0 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                        <Tags className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                       </div>
 
                       <div className="min-w-0 flex-1">

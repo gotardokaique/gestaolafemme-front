@@ -9,11 +9,11 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { TableData } from "@/components/table-data/table-data"
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Wallet, 
-  ArrowUpCircle, 
+import {
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  ArrowUpCircle,
   ArrowDownCircle,
   Filter
 } from "lucide-react"
@@ -62,12 +62,12 @@ export default function FinanceiroPage() {
           <div className="absolute bottom-0 left-0 h-1 w-full bg-primary" />
         </Card>
 
-        <Card>
+        <Card className="p-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-emerald-600">Total Entradas</CardTitle>
             <TrendingUp className="h-4 w-4 text-emerald-600" />
           </CardHeader>
-          <CardContent>
+          <CardContent >
             <div className="text-2xl font-bold text-emerald-600">
               {formatCurrency(data?.totalEntradas ?? 0)}
             </div>
@@ -95,9 +95,14 @@ export default function FinanceiroPage() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <div>
-            <CardTitle>Lançamentos Financeiros</CardTitle>
-            <CardDescription>Visualização detalhada de todas as entradas e saídas.</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
+              <Wallet className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>Lançamentos Financeiros</CardTitle>
+              <CardDescription>Visualização detalhada de todas as entradas e saídas.</CardDescription>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <LancamentoFinanceiroCreateSheet onCreated={loadData} />
@@ -148,8 +153,8 @@ export default function FinanceiroPage() {
                       ) : (
                         <ArrowDownCircle className="h-4 w-4 text-rose-500" />
                       )}
-                      <Badge 
-                        variant={isEntrada ? "default" : "secondary"} 
+                      <Badge
+                        variant={isEntrada ? "default" : "secondary"}
                         className={isEntrada ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none" : "bg-rose-100 text-rose-700 hover:bg-rose-100 border-none"}
                       >
                         {isEntrada ? "Receita" : "Despesa"}

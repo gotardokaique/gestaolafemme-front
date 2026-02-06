@@ -24,6 +24,7 @@ import {
   type CategoriaProdutoCreateDTO,
 } from "@/services/categoria-produto/categoria-produto.schemas"
 import { categoriaProdutoApi } from "@/services/categoria-produto/categoria-produto.api"
+import { TagIcon } from "lucide-react"
 
 type Props = { onCreated: () => void }
 
@@ -49,16 +50,16 @@ export function CategoriaProdutoCreateSheet({ onCreated }: Props) {
       const res = await categoriaProdutoApi.create(formData)
 
       setOpen(false)
-      
+
       const successMsg = (res as any)?.message || "Categoria criada com sucesso!"
       toast.success(successMsg)
-      
+
       onCreated()
     } catch (err: any) {
       console.error("[CreateCategoriaProduto]", err)
       toast.error(err?.message ?? "Erro ao cadastrar categoria.")
     }
-  } 
+  }
 
   return (
     <Sheet
@@ -74,10 +75,17 @@ export function CategoriaProdutoCreateSheet({ onCreated }: Props) {
 
       <SheetContent className="sheet-content-standard">
         <SheetHeader>
-          <SheetTitle>Nova categoria</SheetTitle>
-          <SheetDescription>
-            Preencha os dados para cadastrar uma nova categoria de produto.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-violet-500/10 text-violet-500">
+              <TagIcon className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Nova categoria</SheetTitle>
+              <SheetDescription>
+                Preencha os dados para cadastrar uma nova categoria de produto.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -91,8 +99,8 @@ export function CategoriaProdutoCreateSheet({ onCreated }: Props) {
 
           <div className="space-y-2">
             <Label>Descrição</Label>
-            <Textarea 
-              {...register("descricao")} 
+            <Textarea
+              {...register("descricao")}
               placeholder="Descreva a categoria (opcional)"
               rows={4}
             />

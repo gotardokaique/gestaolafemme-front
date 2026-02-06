@@ -3,8 +3,8 @@ import { z } from "zod"
 export const FornecedorSchema = z.object({
   id: z.number(),
   nome: z.string(),
-  telefone: z.string(),
-  email: z.string(),
+  telefone: z.string().nullable(),
+  email: z.string().nullable(),
   ativo: z.boolean(),
 })
 

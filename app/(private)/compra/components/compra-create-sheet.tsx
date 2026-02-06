@@ -38,6 +38,7 @@ import { fornecedorApi } from "@/services/fornecedor/fornecedor.api"
 import { produtoApi } from "@/services/produto/produto.api"
 import type { Fornecedor } from "@/services/fornecedor/fornecedor.schemas"
 import type { Produto } from "@/services/produto/produto.schemas"
+import { ShoppingBag } from "lucide-react"
 
 type Props = { onCreated: () => void }
 
@@ -111,10 +112,17 @@ export function CompraCreateSheet({ onCreated }: Props) {
 
       <SheetContent className="sheet-content-standard overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Nova Compra</SheetTitle>
-          <SheetDescription>
-            Registre a entrada de mercadorias no estoque.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
+              <ShoppingBag className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Nova Compra</SheetTitle>
+              <SheetDescription>
+                Registre a entrada de mercadorias no estoque.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4 pb-10" onSubmit={handleSubmit(onSubmit)}>
@@ -155,9 +163,9 @@ export function CompraCreateSheet({ onCreated }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Quantidade</Label>
-              <Input 
-                type="number" 
-                {...register("quantidade", { valueAsNumber: true })} 
+              <Input
+                type="number"
+                {...register("quantidade", { valueAsNumber: true })}
               />
               {errors.quantidade && (
                 <p className="text-sm text-destructive">{errors.quantidade.message}</p>

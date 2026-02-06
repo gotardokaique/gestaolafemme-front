@@ -35,6 +35,7 @@ import { produtoApi } from "@/services/produto/produto.api"
 import { categoriaProdutoApi } from "@/services/categoria-produto/categoria-produto.api"
 import type { CategoriaProduto } from "@/services/categoria-produto/categoria-produto.schemas"
 import { NumericInput } from "@/components/ui/numeric-input"
+import { PackagePlus } from "lucide-react"
 
 type Props = { onCreated: () => void }
 
@@ -77,7 +78,7 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
   React.useEffect(() => {
     if (isCalculating.current) return
     isCalculating.current = true
-    
+
     // Update Margin when Venda or Custo changes
     if (valorCusto > 0) {
       const margin = ((valorVenda / valorCusto) - 1) * 100
@@ -85,7 +86,7 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
         setValue("margemLucro", Number(margin.toFixed(2)))
       }
     }
-    
+
     isCalculating.current = false
   }, [valorVenda, valorCusto]) // Triggered when Venda or Custo is edited
 
@@ -132,10 +133,17 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
 
       <SheetContent className="sheet-content-standard overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Novo Produto</SheetTitle>
-          <SheetDescription>
-            Cadastre um novo produto no sistema.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-purple-500/10 text-purple-500">
+              <PackagePlus className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Novo Produto</SheetTitle>
+              <SheetDescription>
+                Cadastre um novo produto no sistema.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4 pb-10" onSubmit={handleSubmit(onSubmit)}>
@@ -234,9 +242,9 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Estoque Mínimo</Label>
-              <Input 
-                type="number" 
-                {...register("estoqueMinimo", { valueAsNumber: true })} 
+              <Input
+                type="number"
+                {...register("estoqueMinimo", { valueAsNumber: true })}
               />
               {errors.estoqueMinimo && (
                 <p className="text-sm text-destructive">{errors.estoqueMinimo.message}</p>
@@ -245,9 +253,9 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
 
             <div className="space-y-2">
               <Label>Quantidade Inicial</Label>
-              <Input 
-                type="number" 
-                {...register("quantidadeInicial", { valueAsNumber: true })} 
+              <Input
+                type="number"
+                {...register("quantidadeInicial", { valueAsNumber: true })}
               />
               {errors.quantidadeInicial && (
                 <p className="text-sm text-destructive">{errors.quantidadeInicial.message}</p>

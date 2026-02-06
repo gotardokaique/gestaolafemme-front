@@ -11,10 +11,10 @@ import {
 import { TableData } from "@/components/table-data/table-data"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { 
-  Warehouse, 
-  AlertTriangle, 
-  Package, 
+import {
+  Warehouse,
+  AlertTriangle,
+  Package,
   Settings2,
   Tag,
   Search
@@ -39,7 +39,7 @@ export default function EstoquePage() {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <div className="p-2 rounded-lg bg-purple-500/30 text-purple-500">
               <Warehouse className="h-5 w-5" />
             </div>
             <div>
@@ -81,7 +81,7 @@ export default function EstoquePage() {
                   const isLow = row.quantidadeAtual <= row.estoqueMinimo
                   return (
                     <div className="flex items-center gap-2">
-                       <span className={`text-lg font-bold ${isLow ? 'text-destructive' : 'text-foreground'}`}>
+                      <span className={`text-lg font-bold ${isLow ? 'text-destructive' : 'text-foreground'}`}>
                         {row.quantidadeAtual}
                       </span>
                       <span className="text-xs text-muted-foreground">un</span>
@@ -111,9 +111,9 @@ export default function EstoquePage() {
                 label=""
                 render={(_, row) => (
                   <div className="flex justify-end">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleAjuste(row)}
                       className="gap-2 h-8"
                     >

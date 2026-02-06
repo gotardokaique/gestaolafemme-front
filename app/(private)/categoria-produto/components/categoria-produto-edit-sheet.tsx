@@ -26,6 +26,7 @@ import {
   type CategoriaProduto,
   type CategoriaProdutoUpdateDTO,
 } from "@/services/categoria-produto/categoria-produto.schemas"
+import { Tag } from "lucide-react"
 
 type Props = {
   categoria: CategoriaProduto
@@ -84,8 +85,15 @@ export function CategoriaProdutoEditSheet({ categoria, onUpdated }: Props) {
 
       <SheetContent className="sheet-content-standard">
         <SheetHeader>
-          <SheetTitle>Editar categoria</SheetTitle>
-          <SheetDescription>Atualize as informações da categoria.</SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-violet-500/10 text-violet-500">
+              <Tag className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Editar categoria</SheetTitle>
+              <SheetDescription>Atualize as informações da categoria.</SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -99,9 +107,9 @@ export function CategoriaProdutoEditSheet({ categoria, onUpdated }: Props) {
 
           <div className="space-y-2">
             <Label htmlFor={`categoria-descricao-${categoria.id}`}>Descrição</Label>
-            <Textarea 
-              id={`categoria-descricao-${categoria.id}`} 
-              {...register("descricao")} 
+            <Textarea
+              id={`categoria-descricao-${categoria.id}`}
+              {...register("descricao")}
               rows={4}
             />
           </div>

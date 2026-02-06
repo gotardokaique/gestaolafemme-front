@@ -10,12 +10,12 @@ import {
 } from "@/components/ui/card"
 import { TableData } from "@/components/table-data/table-data"
 import { Badge } from "@/components/ui/badge"
-import { 
-  ArrowUpCircle, 
-  ArrowDownCircle, 
-  Settings, 
-  Calendar, 
-  Package, 
+import {
+  ArrowUpCircle,
+  ArrowDownCircle,
+  Settings,
+  Calendar,
+  Package,
   Info
 } from "lucide-react"
 
@@ -31,7 +31,7 @@ export default function MovimentacaoEstoquePage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <div className="p-2 rounded-lg bg-teal-500/30 text-teal-500">
               <Package className="h-5 w-5" />
             </div>
             <div>

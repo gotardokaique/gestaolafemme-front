@@ -23,6 +23,7 @@ import {
   type FornecedorCreateDTO,
 } from "@/services/fornecedor/fornecedor.schemas"
 import { fornecedorApi } from "@/services/fornecedor/fornecedor.api"
+import { UserPlus } from "lucide-react"
 
 type Props = { onCreated: () => void }
 
@@ -49,16 +50,16 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
       const res = await fornecedorApi.create(formData)
 
       setOpen(false)
-      
+
       const successMsg = (res as any)?.message
       toast.success(successMsg)
-      
+
       onCreated()
     } catch (err: any) {
       console.error("[CreateFornecedor]", err)
       toast.error(err?.message ?? "Erro ao cadastrar fornecedor.")
     }
-  } 
+  }
 
   return (
     <Sheet
@@ -75,10 +76,17 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
       {/* ~50% maior */}
       <SheetContent className="sheet-content-standard">
         <SheetHeader>
-          <SheetTitle>Novo fornecedor</SheetTitle>
-          <SheetDescription>
-            Preencha os dados para cadastrar um fornecedor.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
+              <UserPlus className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Novo fornecedor</SheetTitle>
+              <SheetDescription>
+                Preencha os dados para cadastrar um fornecedor.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>

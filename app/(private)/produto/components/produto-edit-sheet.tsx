@@ -36,11 +36,12 @@ import { produtoApi } from "@/services/produto/produto.api"
 import { categoriaProdutoApi } from "@/services/categoria-produto/categoria-produto.api"
 import type { CategoriaProduto } from "@/services/categoria-produto/categoria-produto.schemas"
 import { NumericInput } from "@/components/ui/numeric-input"
+import { Pencil } from "lucide-react"
 
-type Props = { 
+type Props = {
   produto: Produto | null
   onOpenChange: (open: boolean) => void
-  onUpdated: () => void 
+  onUpdated: () => void
 }
 
 export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
@@ -70,14 +71,14 @@ export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
   React.useEffect(() => {
     if (isCalculating.current) return
     isCalculating.current = true
-    
+
     if (valorCusto > 0) {
       const margin = ((valorVenda / valorCusto) - 1) * 100
       if (Math.abs(margin - (margemLucro || 0)) > 0.01) {
         setValue("margemLucro", Number(margin.toFixed(2)))
       }
     }
-    
+
     isCalculating.current = false
   }, [valorVenda, valorCusto])
 
@@ -104,7 +105,7 @@ export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
         estoqueMinimo: produto.estoqueMinimo,
         ativo: produto.ativo,
       })
-      
+
       categoriaProdutoApi.list({ ativo: true }).then(setCategorias).catch(() => {
         toast.error("Erro ao carregar categorias.")
       })
@@ -130,10 +131,17 @@ export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
     >
       <SheetContent className="sheet-content-standard overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Editar Produto</SheetTitle>
-          <SheetDescription>
-            Altere as informações do produto.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-purple-500/10 text-purple-500">
+              <Pencil className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Editar Produto</SheetTitle>
+              <SheetDescription>
+                Altere as informações do produto.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4 pb-10" onSubmit={handleSubmit(onSubmit)}>
@@ -142,7 +150,7 @@ export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
               <Label>Produto Ativo</Label>
               <p className="text-xs text-muted-foreground">Define se o produto está disponível para uso.</p>
             </div>
-            <Switch 
+            <Switch
               checked={isActive}
               onCheckedChange={(val) => setValue("ativo", val)}
             />
@@ -242,9 +250,9 @@ export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
 
           <div className="space-y-2">
             <Label>Estoque Mínimo</Label>
-            <Input 
-              type="number" 
-              {...register("estoqueMinimo", { valueAsNumber: true })} 
+            <Input
+              type="number"
+              {...register("estoqueMinimo", { valueAsNumber: true })}
             />
             {errors.estoqueMinimo && (
               <p className="text-sm text-destructive">{errors.estoqueMinimo.message}</p>

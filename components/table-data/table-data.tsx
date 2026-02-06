@@ -328,11 +328,21 @@ function TableDataInner<TData>({
   const controlledKey = tabKey ?? tabsProps?.activeKey
   const controlledOnChange = onTabKeyChange ?? tabsProps?.onActiveKeyChange
 
+  // Por padrão, seleciona a primeira tab
+  const firstTabKey = tabsExtracted?.keys[0]
   const computedDefault =
-    defaultTabKey ?? tabsProps?.defaultKey ?? (tabsExtracted ? tabsExtracted.keys[0] : undefined)
+    defaultTabKey ?? tabsProps?.defaultKey ?? firstTabKey
 
-  const [internalKey, setInternalKey] = React.useState<string | undefined>(computedDefault)
-  const activeKey = controlledKey ?? internalKey
+  const [internalKey, setInternalKey] = React.useState<string | undefined>(undefined)
+
+  // Garantir que a primeira tab seja selecionada quando o componente montar
+  React.useEffect(() => {
+    if (internalKey === undefined && firstTabKey) {
+      setInternalKey(firstTabKey)
+    }
+  }, [firstTabKey, internalKey])
+
+  const activeKey = controlledKey ?? internalKey ?? computedDefault
 
   const setKey = React.useCallback(
     (k: string) => {
@@ -418,14 +428,26 @@ function TableDataInner<TData>({
     )
   }
 
+  // Cache para manter contagens anteriores
+  const tabCountsCache = React.useRef<Record<string, number>>({})
+
   const tabCounts = React.useMemo(() => {
     if (!tabsExtracted) return {}
     const counts: Record<string, number> = {}
     tabsExtracted.tabs.forEach((t, i) => {
       const key = tabsExtracted.keys[i]
       const tabDataFiltered = applyTabFilter(data, t.props)
-      counts[key] = tabDataFiltered.length
+      // Só atualiza a contagem se tiver dados, senão mantém o cache
+      if (data.length > 0 || tabCountsCache.current[key] === undefined) {
+        counts[key] = tabDataFiltered.length
+      } else {
+        counts[key] = tabCountsCache.current[key] ?? 0
+      }
     })
+    // Atualiza o cache quando houver dados
+    if (data.length > 0) {
+      tabCountsCache.current = counts
+    }
     return counts
   }, [data, tabsExtracted])
 
@@ -489,10 +511,10 @@ function TableDataInner<TData>({
                 <TabsTrigger
                   key={key}
                   value={key}
-                  className="gap-2 px-4 data-[state=active]:bg-gray-400/70 data-[state=active]:border-border dark:data-[state=active]:bg-input/30 dark:data-[state=active]:border-input"
+                  className="gap-2 px-4 data-[state=active]:bg-blue-400 data-[state=active]:text-white data-[state=active]:border-blue-500 dark:data-[state=active]:bg-blue-400 dark:data-[state=active]:text-white dark:data-[state=active]:border-blue-300"
                 >
                   {t.props.label}
-                  <span className="flex h-4 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground px-1">
+                  <span className="flex h-4 min-w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold text-inherit px-1">
                     {count}
                   </span>
                 </TabsTrigger>
@@ -504,65 +526,67 @@ function TableDataInner<TData>({
 
       {/* Scroll vertical interno + SEM scroll horizontal */}
       <div
-        className={`min-h-0 overflow-y-auto overflow-x-hidden rounded-md border ${maxHeightClassName}`}
+        className={`min-h-0 overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600 ${maxHeightClassName}`}
       >
-        <Table className="w-full table-fixed">
-          <TableHeader className="sticky top-0 z-10 bg-background">
-            <TableRow>
-              {columnNodes.map((col) => {
-                const isAcoes = col.props.name === (actionsKey as any)
-                return (
-                  <TableHead
-                    key={col.props.name}
-                    className={isAcoes ? `${actionsWidthClassName} whitespace-nowrap pr-4` : ""}
-                  >
-                    <div className={isAcoes ? "w-full text-right truncate" : "truncate"}>
-                      {col.props.label}
-                    </div>
-                  </TableHead>
-                )
-              })}
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columnNodes.length}>
-                  <div className="truncate">{emptyText}</div>
-                </TableCell>
+        <div className="overflow-y-auto overflow-x-hidden h-full">
+          <Table className="w-full table-fixed rounded-lg bg-gray-300 dark:bg-gray-700">
+            <TableHeader className="sticky top-0 z-10">
+              <TableRow className=" rounded-lg !bg-gray-300 dark:!bg-gray-700 ">
+                {columnNodes.map((col) => {
+                  const isAcoes = col.props.name === (actionsKey as any)
+                  return (
+                    <TableHead
+                      key={col.props.name}
+                      className={isAcoes ? `${actionsWidthClassName} whitespace-nowrap pr-4` : ""}
+                    >
+                      <div className={isAcoes ? "w-full text-right truncate" : "truncate"}>
+                        {col.props.label}
+                      </div>
+                    </TableHead>
+                  )
+                })}
               </TableRow>
-            ) : (
-              rows.map((row) => (
-                <TableRow key={row.id}>
-                  {columnNodes.map((col) => {
-                    const key = col.props.name
-                    const value = row.getValue(key)
-                    const custom = col.props.render
-                    const isAcoes = key === (actionsKey as any)
+            </TableHeader>
 
-                    return (
-                      <TableCell
-                        key={key}
-                        className={isAcoes ? `${actionsWidthClassName} whitespace-nowrap pr-4` : ""}
-                      >
-                        {isAcoes ? (
-                          <div className="flex items-center justify-end gap-2">
-                            {custom ? custom(value, row.original) : value != null ? String(value) : null}
-                          </div>
-                        ) : (
-                          <div className="truncate">
-                            {custom ? custom(value, row.original) : value != null ? String(value) : ""}
-                          </div>
-                        )}
-                      </TableCell>
-                    )
-                  })}
+            <TableBody>
+              {rows.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columnNodes.length}>
+                    <div className="truncate">{emptyText}</div>
+                  </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                rows.map((row, index) => (
+                  <TableRow key={row.id} className={index % 2 === 0 ? "bg-gray-100 dark:bg-gray-800" : "bg-gray-50 dark:bg-gray-900"}>
+                    {columnNodes.map((col) => {
+                      const key = col.props.name
+                      const value = row.getValue(key)
+                      const custom = col.props.render
+                      const isAcoes = key === (actionsKey as any)
+
+                      return (
+                        <TableCell
+                          key={key}
+                          className={isAcoes ? `${actionsWidthClassName} whitespace-nowrap pr-4` : ""}
+                        >
+                          {isAcoes ? (
+                            <div className="flex items-center justify-end gap-2 ">
+                              {custom ? custom(value, row.original) : value != null ? String(value) : null}
+                            </div>
+                          ) : (
+                            <div className="truncate">
+                              {custom ? custom(value, row.original) : value != null ? String(value) : ""}
+                            </div>
+                          )}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   )

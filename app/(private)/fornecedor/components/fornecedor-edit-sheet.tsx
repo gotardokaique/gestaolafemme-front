@@ -25,6 +25,7 @@ import {
   type Fornecedor,
   type FornecedorUpdateDTO,
 } from "@/services/fornecedor/fornecedor.schemas"
+import { UserCog } from "lucide-react"
 
 type Props = {
   fornecedor: Fornecedor
@@ -85,8 +86,15 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
 
       <SheetContent className="sheet-content-standard">
         <SheetHeader>
-          <SheetTitle>Editar fornecedor</SheetTitle>
-          <SheetDescription>Atualize as informações do fornecedor.</SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
+              <UserCog className="h-5 w-5" />
+            </div>
+            <div>
+              <SheetTitle>Editar fornecedor</SheetTitle>
+              <SheetDescription>Atualize as informações do fornecedor.</SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>

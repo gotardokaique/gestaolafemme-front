@@ -28,9 +28,14 @@ export default function ComprasPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>Compras</CardTitle>
-            <CardDescription>Gerencie as compras e entradas de mercadorias.</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-amber-500/30 text-amber-500">
+              <ShoppingCart className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>Compras</CardTitle>
+              <CardDescription>Gerencie as compras e entradas de mercadorias.</CardDescription>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -51,8 +56,8 @@ export default function ComprasPage() {
                 label="Compra"
                 render={(_, row) => (
                   <div className="flex items-start gap-4">
-                    <div className="h-10 w-10 shrink-0 rounded-full bg-muted flex items-center justify-center">
-                      <ShoppingCart className="h-5 w-5 text-muted-foreground" />
+                    <div className="h-10 w-10 shrink-0 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                      <ShoppingCart className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                     </div>
 
                     <div className="min-w-0 flex-1">

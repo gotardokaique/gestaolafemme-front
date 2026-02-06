@@ -23,9 +23,14 @@ export default function VendasPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>Vendas</CardTitle>
-            <CardDescription>Histórico de vendas realizadas pela unidade.</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-500/30 text-emerald-500">
+              <ShoppingCart className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>Vendas</CardTitle>
+              <CardDescription>Histórico de vendas realizadas pela unidade.</CardDescription>
+            </div>
           </div>
 
           <VendaCreateSheet onCreated={reload} />
@@ -43,7 +48,7 @@ export default function VendasPage() {
                 label="Venda"
                 render={(_, row) => (
                   <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10 text-primary">
+                    <div className="flex h-8 w-8 items-center justify-center rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
                       <ShoppingCart className="h-4 w-4" />
                     </div>
                     <span className="font-mono font-medium">#{row.id}</span>
