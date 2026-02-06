@@ -122,7 +122,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 w-full max-w-md mx-auto">
         <CardContent className="p-0">
-          <form className="p-6 md:p-8 bg-gray-100 dark:bg-background" onSubmit={handleSubmitLogin}>
+          <form className="p-6 md:p-8 bg-background" onSubmit={handleSubmitLogin}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <Gem className="w-8 h-8 items-center text-rose-500" />
@@ -147,12 +147,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password"><Lock className="w-4 h-4 items-center" /> Senha</FieldLabel>
-                  {/* <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    Esqueceu a senha?
-                  </a> */}
                 </div>
                 <div className="relative">
                   <Input
