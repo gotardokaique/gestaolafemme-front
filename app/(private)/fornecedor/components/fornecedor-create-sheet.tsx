@@ -23,17 +23,20 @@ import {
   type FornecedorCreateDTO,
 } from "@/services/fornecedor/fornecedor.schemas"
 import { fornecedorApi } from "@/services/fornecedor/fornecedor.api"
+import { maskPhone, unmaskPhone } from "@/lib/utils"
 import { UserPlus } from "lucide-react"
 
 type Props = { onCreated: () => void }
 
 export function FornecedorCreateSheet({ onCreated }: Props) {
   const [open, setOpen] = React.useState(false)
+  const [telefoneDisplay, setTelefoneDisplay] = React.useState("")
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { isSubmitting, errors },
   } = useForm<FornecedorCreateDTO>({
     resolver: zodResolver(FornecedorCreateSchema),
@@ -44,6 +47,13 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
       ativo: true,
     },
   })
+
+  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskPhone(e.target.value)
+    setTelefoneDisplay(masked)
+    // Salva apenas os dígitos no form
+    setValue("telefone", unmaskPhone(masked))
+  }
 
   const onSubmit = async (formData: FornecedorCreateDTO) => {
     try {
@@ -61,16 +71,24 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
     }
   }
 
+  const handleOpenChange = (v: boolean) => {
+    setOpen(v)
+    if (!v) {
+      reset()
+      setTelefoneDisplay("")
+    }
+  }
+
   return (
     <Sheet
       open={open}
-      onOpenChange={(v) => {
-        setOpen(v)
-        if (!v) reset()
-      }}
+      onOpenChange={handleOpenChange}
     >
       <SheetTrigger asChild>
-        <Button>Adicionar fornecedor</Button>
+        <Button>
+          <UserPlus className="h-4 w-4" />
+          Adicionar fornecedor
+        </Button>
       </SheetTrigger>
 
       {/* ~50% maior */}
@@ -91,7 +109,7 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
-            <Label>Nome</Label>
+            <Label>Nome *</Label>
             <Input {...register("nome")} />
             {errors.nome && (
               <p className="text-sm text-destructive">{errors.nome.message}</p>
@@ -99,8 +117,16 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
           </div>
 
           <div className="space-y-2">
-            <Label>Telefone</Label>
-            <Input {...register("telefone")} />
+            <Label>Telefone *</Label>
+            <Input
+              value={telefoneDisplay}
+              onChange={handleTelefoneChange}
+              placeholder="(00) 00000-0000"
+              maxLength={15}
+            />
+            {errors.telefone && (
+              <p className="text-sm text-destructive">{errors.telefone.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">

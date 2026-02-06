@@ -70,7 +70,10 @@ export function CategoriaProdutoCreateSheet({ onCreated }: Props) {
       }}
     >
       <SheetTrigger asChild>
-        <Button>Adicionar categoria</Button>
+        <Button>
+          <TagIcon className="h-4 w-4" />
+          Adicionar categoria
+        </Button>
       </SheetTrigger>
 
       <SheetContent className="sheet-content-standard">

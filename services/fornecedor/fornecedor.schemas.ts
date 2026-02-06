@@ -14,7 +14,7 @@ export const FornecedorListSchema = z.array(FornecedorSchema)
 
 export const FornecedorCreateSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  telefone: z.string().optional().nullable(),
+  telefone: z.string().min(10, "Telefone é obrigatório e deve ter no mínimo 10 dígitos"),
   email: z.string().email("Email inválido").optional().nullable().or(z.literal("")),
   ativo: z.boolean().optional(),
 })

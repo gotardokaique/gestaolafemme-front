@@ -79,6 +79,7 @@ export function CategoriaProdutoEditSheet({ categoria, onUpdated }: Props) {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="sm">
+          <Tag className="h-4 w-4" />
           Editar
         </Button>
       </SheetTrigger>

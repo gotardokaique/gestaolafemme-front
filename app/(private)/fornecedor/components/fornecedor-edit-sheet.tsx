@@ -25,6 +25,7 @@ import {
   type Fornecedor,
   type FornecedorUpdateDTO,
 } from "@/services/fornecedor/fornecedor.schemas"
+import { maskPhone, unmaskPhone } from "@/lib/utils"
 import { UserCog } from "lucide-react"
 
 type Props = {
@@ -34,12 +35,14 @@ type Props = {
 
 export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
   const [open, setOpen] = React.useState(false)
+  const [telefoneDisplay, setTelefoneDisplay] = React.useState("")
 
   const {
     register,
     handleSubmit,
     reset,
     control,
+    setValue,
     formState: { isSubmitting, errors },
   } = useForm<FornecedorUpdateDTO>({
     resolver: zodResolver(FornecedorUpdateSchema),
@@ -54,14 +57,24 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
   // Sincroniza o form quando o fornecedor muda ou o sheet abre
   React.useEffect(() => {
     if (open) {
+      const telefoneValue = fornecedor.telefone ?? ""
       reset({
         nome: fornecedor.nome,
-        telefone: fornecedor.telefone ?? "",
+        telefone: telefoneValue,
         email: fornecedor.email ?? "",
         ativo: fornecedor.ativo,
       })
+      // Aplica máscara ao telefone existente
+      setTelefoneDisplay(maskPhone(telefoneValue))
     }
   }, [open, fornecedor, reset])
+
+  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskPhone(e.target.value)
+    setTelefoneDisplay(masked)
+    // Salva apenas os dígitos no form
+    setValue("telefone", unmaskPhone(masked))
+  }
 
   const onSubmit = async (data: FornecedorUpdateDTO) => {
     try {
@@ -80,6 +93,7 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="sm">
+          <UserCog className="h-4 w-4" />
           Editar
         </Button>
       </SheetTrigger>
@@ -99,7 +113,7 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
-            <Label htmlFor={`fornecedor-nome-${fornecedor.id}`}>Nome</Label>
+            <Label htmlFor={`fornecedor-nome-${fornecedor.id}`}>Nome *</Label>
             <Input id={`fornecedor-nome-${fornecedor.id}`} {...register("nome")} />
             {errors.nome && (
               <p className="text-sm text-destructive">{errors.nome.message}</p>
@@ -107,8 +121,17 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`fornecedor-telefone-${fornecedor.id}`}>Telefone</Label>
-            <Input id={`fornecedor-telefone-${fornecedor.id}`} {...register("telefone")} />
+            <Label htmlFor={`fornecedor-telefone-${fornecedor.id}`}>Telefone *</Label>
+            <Input
+              id={`fornecedor-telefone-${fornecedor.id}`}
+              value={telefoneDisplay}
+              onChange={handleTelefoneChange}
+              placeholder="(00) 00000-0000"
+              maxLength={15}
+            />
+            {errors.telefone && (
+              <p className="text-sm text-destructive">{errors.telefone.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">

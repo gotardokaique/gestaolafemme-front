@@ -128,7 +128,10 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
       }}
     >
       <SheetTrigger asChild>
-        <Button>Novo Produto</Button>
+        <Button>
+          <PackagePlus className="h-4 w-4" />
+          Novo Produto
+        </Button>
       </SheetTrigger>
 
       <SheetContent className="sheet-content-standard overflow-y-auto">
