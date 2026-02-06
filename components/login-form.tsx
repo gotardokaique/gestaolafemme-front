@@ -57,7 +57,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       // Verifica se o usuário precisa trocar a senha
       try {
         const checkResponse = await api.get("/users/check-trocar-senha")
-        
+
         if (checkResponse.success && (checkResponse.data as any)?.precisaTrocarSenha) {
           // Usuário precisa trocar senha
           toast.warning("Você precisa alterar sua senha por questões de segurança")
@@ -120,9 +120,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8 bg-gray-100 dark:bg-background border-r border-gray-200 dark:border-border" onSubmit={handleSubmitLogin}>
+      <Card className="overflow-hidden p-0 w-full max-w-md mx-auto">
+        <CardContent className="p-0">
+          <form className="p-6 md:p-8 bg-gray-100 dark:bg-background" onSubmit={handleSubmitLogin}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <Gem className="w-8 h-8 items-center text-rose-500" />
@@ -155,52 +155,45 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   </a> */}
                 </div>
                 <div className="relative">
-                    <Input 
-                        id="password" 
-                        type={showPassword ? "text" : "password"} 
-                        required 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        disabled={isLoading}
-                        className="pr-10 bg-gray-50 border-rose-200 border-1"
-                    />
-                     <button
-                        type="button"
-                        className="text-muted-foreground hover:text-foreground absolute right-2 top-1/2 -translate-y-1/2"
-                        onClick={() => setShowPassword((v) => !v)}
-                        disabled={isLoading}
-                      >
-                        {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                      </button>
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="pr-10 bg-gray-50 border-rose-200 border-1"
+                  />
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground absolute right-2 top-1/2 -translate-y-1/2"
+                    onClick={() => setShowPassword((v) => !v)}
+                    disabled={isLoading}
+                  >
+                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
                 </div>
               </Field>
               <Field>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-rose-100 text-rose-900 border-2 border-rose-300 hover:bg-rose-200 hover:border-rose-400 shadow-sm" 
+                <Button
+                  type="submit"
+                  className="w-full bg-rose-100 text-rose-900 border-2 border-rose-300 hover:bg-rose-200 hover:border-rose-400 shadow-sm"
                   isLoading={isLoading}
                 >
                   <Gem className="h-4 w-4" />
                   Login
                 </Button>
               </Field>
-              
+
               {/* <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
               </FieldSeparator> */}
-              
+
               <FieldDescription className="text-center">
                 Não tem uma conta? Peça para o admin.
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
-            <img
-              src="/img/bg-login.jpeg"
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.8]"
-            />
-          </div>
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
@@ -209,7 +202,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       </FieldDescription>
 
       {/* Dialog de Troca Obrigatória de Senha */}
-      <Dialog open={showTrocarSenha} onOpenChange={() => {}}>
+      <Dialog open={showTrocarSenha} onOpenChange={() => { }}>
         <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
