@@ -66,7 +66,6 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
 
       onCreated()
     } catch (err: any) {
-      console.error("[CreateFornecedor]", err)
       toast.error(err?.message ?? "Erro ao cadastrar fornecedor.")
     }
   }

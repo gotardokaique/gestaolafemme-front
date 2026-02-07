@@ -34,35 +34,35 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <h1 className="text-responsive-2xl font-bold tracking-tight">Dashboard</h1>
 
       {/* Cards de Métricas */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {/* Saldo Atual */}
-        <Card>
+        <Card className="transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Saldo Atual</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${data && data.saldoAtual >= 0 ? "text-green-600" : "text-red-600"}`}>
+            <div className={`text-xl sm:text-2xl font-bold ${data && data.saldoAtual >= 0 ? "text-green-600" : "text-red-600"}`}>
               {formatCurrency(data?.saldoAtual ?? 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               Balanço geral
             </p>
           </CardContent>
         </Card>
 
         {/* Vendas no Mês */}
-        <Card>
+        <Card className="transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Vendas (Mês)</CardTitle>
             <ShoppingBag className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(data?.valorTotalVendasMes ?? 0)}</div>
+            <div className="text-xl sm:text-2xl font-bold">{formatCurrency(data?.valorTotalVendasMes ?? 0)}</div>
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
               <span className="font-medium text-foreground mr-1">{data?.totalVendasMes ?? 0}</span> vendas realizadas
@@ -71,13 +71,13 @@ export default function DashboardPage() {
         </Card>
 
         {/* Compras no Mês */}
-        <Card>
+        <Card className="transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Compras (Mês)</CardTitle>
             <ShoppingCart className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(data?.valorTotalComprasMes ?? 0)}</div>
+            <div className="text-xl sm:text-2xl font-bold">{formatCurrency(data?.valorTotalComprasMes ?? 0)}</div>
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               <TrendingDown className="mr-1 h-3 w-3 text-red-500" />
               <span className="font-medium text-foreground mr-1">{data?.totalComprasMes ?? 0}</span> compras realizadas
@@ -87,20 +87,20 @@ export default function DashboardPage() {
       </div>
 
       {/* Gráficos ou mais detalhes poderiam vir aqui */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-7">
+        <Card className="lg:col-span-4 transition-smooth hover:shadow-md">
           <CardHeader>
-            <CardTitle>Visão Geral</CardTitle>
+            <CardTitle className="text-responsive-lg">Visão Geral</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
-            <div className="h-[200px] flex items-center justify-center text-muted-foreground text-sm">
+            <div className="h-[200px] sm:h-[250px] flex items-center justify-center text-muted-foreground text-sm">
               Gráfico de evolução (Em breve)
             </div>
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="lg:col-span-3 transition-smooth hover:shadow-md">
           <CardHeader>
-            <CardTitle>Atalhos Rápidos</CardTitle>
+            <CardTitle className="text-responsive-lg">Atalhos Rápidos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

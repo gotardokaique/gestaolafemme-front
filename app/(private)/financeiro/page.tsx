@@ -46,67 +46,67 @@ export default function FinanceiroPage() {
   }, [loadData])
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="relative overflow-hidden">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="relative overflow-hidden transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Saldo Atual</CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(data?.saldoAtual ?? 0)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-xl sm:text-2xl font-bold">{formatCurrency(data?.saldoAtual ?? 0)}</div>
+            <p className="text-xs text-muted-foreground mt-1">
               Total em caixa na unidade
             </p>
           </CardContent>
           <div className="absolute bottom-0 left-0 h-1 w-full bg-primary" />
         </Card>
 
-        <Card className="p-2">
+        <Card className="transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-emerald-600">Total Entradas</CardTitle>
             <TrendingUp className="h-4 w-4 text-emerald-600" />
           </CardHeader>
-          <CardContent >
-            <div className="text-2xl font-bold text-emerald-600">
+          <CardContent>
+            <div className="text-xl sm:text-2xl font-bold text-emerald-600">
               {formatCurrency(data?.totalEntradas ?? 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               Acumulado de vendas
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-rose-600">Total Saídas</CardTitle>
             <TrendingDown className="h-4 w-4 text-rose-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-rose-600">
+            <div className="text-xl sm:text-2xl font-bold text-rose-600">
               {formatCurrency(data?.totalSaidas ?? 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               Acumulado de compras
             </p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-4">
+      <Card className="transition-smooth">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
+            <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-600">
               <Wallet className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle>Lançamentos Financeiros</CardTitle>
-              <CardDescription>Visualização detalhada de todas as entradas e saídas.</CardDescription>
+              <CardTitle className="text-responsive-lg">Lançamentos Financeiros</CardTitle>
+              <CardDescription className="text-responsive-sm">Visualização detalhada de todas as entradas e saídas.</CardDescription>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <LancamentoFinanceiroCreateSheet onCreated={loadData} />
-            <Button variant="outline" size="sm" onClick={loadData}>
+            <Button variant="outline" size="sm" onClick={loadData} className="text-xs sm:text-sm">
               Atualizar
             </Button>
           </div>
@@ -122,7 +122,7 @@ export default function FinanceiroPage() {
                 name="dataLancamento"
                 label="Data"
                 render={(_, row) => (
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-xs sm:text-sm text-muted-foreground">
                     {formatDateBR(row.dataLancamento)}
                   </span>
                 )}
@@ -133,7 +133,7 @@ export default function FinanceiroPage() {
                 label="Descrição"
                 render={(_, row) => (
                   <div className="flex flex-col">
-                    <span className="font-medium">{row.descricao}</span>
+                    <span className="font-medium text-responsive-sm truncate">{row.descricao}</span>
                     <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
                       ID: #{row.id}
                     </span>
@@ -147,15 +147,18 @@ export default function FinanceiroPage() {
                 render={(_, row) => {
                   const isEntrada = row.tipo === "ENTRADA"
                   return (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
                       {isEntrada ? (
-                        <ArrowUpCircle className="h-4 w-4 text-emerald-500" />
+                        <ArrowUpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-500" />
                       ) : (
-                        <ArrowDownCircle className="h-4 w-4 text-rose-500" />
+                        <ArrowDownCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-rose-500" />
                       )}
                       <Badge
                         variant={isEntrada ? "default" : "secondary"}
-                        className={isEntrada ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none" : "bg-rose-100 text-rose-700 hover:bg-rose-100 border-none"}
+                        className={cn(
+                          "text-[10px] sm:text-xs",
+                          isEntrada ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none" : "bg-rose-100 text-rose-700 hover:bg-rose-100 border-none"
+                        )}
                       >
                         {isEntrada ? "Receita" : "Despesa"}
                       </Badge>
@@ -169,7 +172,7 @@ export default function FinanceiroPage() {
                 label="Valor"
                 render={(_, row) => (
                   <span className={cn(
-                    "font-bold",
+                    "font-bold text-xs sm:text-sm",
                     row.tipo === "ENTRADA" ? "text-emerald-600" : "text-rose-600"
                   )}>
                     {row.tipo === "ENTRADA" ? "+ " : "- "}

@@ -70,7 +70,6 @@ export function CategoriaProdutoEditSheet({ categoria, onUpdated }: Props) {
       toast.success(res.message || "Categoria atualizada com sucesso!")
       onUpdated()
     } catch (err: any) {
-      console.error("[EditCategoriaProduto]", err)
       toast.error(err?.message ?? "Não foi possível atualizar a categoria.")
     }
   }

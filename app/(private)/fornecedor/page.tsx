@@ -30,16 +30,16 @@ export default function FornecedoresPage() {
   } = useFornecedoresTable()
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <Card className="transition-smooth">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-500/30 text-blue-500">
+            <div className="p-2 rounded-lg bg-blue-500/20 text-blue-600">
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle>Fornecedores</CardTitle>
-              <CardDescription>Cadastre e edite fornecedores.</CardDescription>
+              <CardTitle className="text-responsive-lg">Fornecedores</CardTitle>
+              <CardDescription className="text-responsive-sm">Cadastre e edite fornecedores.</CardDescription>
             </div>
           </div>
 
@@ -113,37 +113,37 @@ export default function FornecedoresPage() {
                   const isActive = !!row.ativo
 
                   return (
-                    <div className="flex items-start gap-3">
-                      <div className="h-10 w-10 shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <div className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                        <User className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
                       </div>
 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <div className="font-medium leading-tight truncate">
+                          <div className="font-medium leading-tight truncate text-responsive-sm">
                             {row.nome ?? "-"}
                           </div>
 
                           {isActive ? (
                             <span className="inline-flex items-center gap-1 text-emerald-600">
-                              <BadgeCheck className="h-4 w-4" />
-                              <span className="text-xs">Ativo</span>
+                              <BadgeCheck className="h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="text-[10px] sm:text-xs">Ativo</span>
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-destructive">
-                              <BadgeX className="h-4 w-4" />
-                              <span className="text-xs">Inativo</span>
+                              <BadgeX className="h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="text-[10px] sm:text-xs">Inativo</span>
                             </span>
                           )}
                         </div>
 
-                        <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-                          <Phone className="h-4 w-4 text-emerald-600" />
+                        <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                          <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-600" />
                           <span className="truncate">{phone}</span>
                         </div>
 
-                        <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-                          <Mail className="h-4 w-4" />
+                        <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                          <Mail className="h-3 w-3 sm:h-4 sm:w-4" />
                           <span className="truncate">{email}</span>
                         </div>
                       </div>

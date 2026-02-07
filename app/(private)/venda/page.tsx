@@ -20,16 +20,16 @@ export default function VendasPage() {
   const { data, loading, reload } = useVendasTable()
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <Card className="transition-smooth">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-emerald-500/30 text-emerald-500">
+            <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-600">
               <ShoppingCart className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle>Vendas</CardTitle>
-              <CardDescription>Histórico de vendas realizadas pela unidade.</CardDescription>
+              <CardTitle className="text-responsive-lg">Vendas</CardTitle>
+              <CardDescription className="text-responsive-sm">Histórico de vendas realizadas pela unidade.</CardDescription>
             </div>
           </div>
 
@@ -48,10 +48,10 @@ export default function VendasPage() {
                 label="Venda"
                 render={(_, row) => (
                   <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
-                      <ShoppingCart className="h-4 w-4" />
+                    <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+                      <ShoppingCart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
-                    <span className="font-mono font-medium">#{row.id}</span>
+                    <span className="font-mono font-medium text-xs sm:text-sm">#{row.id}</span>
                   </div>
                 )}
               />
@@ -61,8 +61,8 @@ export default function VendasPage() {
                 label="Data"
                 render={(_, row) => (
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>{formatDateBR(row.dataVenda)}</span>
+                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="text-xs sm:text-sm">{formatDateBR(row.dataVenda)}</span>
                   </div>
                 )}
               />
@@ -72,8 +72,8 @@ export default function VendasPage() {
                 label="Pagamento"
                 render={(_, row) => (
                   <div className="flex items-center gap-2">
-                    <Banknote className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{row.formaPagamento}</span>
+                    <Banknote className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+                    <span className="text-xs sm:text-sm font-medium truncate">{row.formaPagamento}</span>
                   </div>
                 )}
               />
@@ -82,7 +82,7 @@ export default function VendasPage() {
                 name="valorTotal"
                 label="Total"
                 render={(_, row) => (
-                  <span className="text-base font-bold text-primary">
+                  <span className="text-sm sm:text-base font-bold text-primary">
                     {formatCurrency(row.valorTotal)}
                   </span>
                 )}

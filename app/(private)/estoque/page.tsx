@@ -35,16 +35,16 @@ export default function EstoquePage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <Card className="transition-smooth">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-purple-500/30 text-purple-500">
+            <div className="p-2 rounded-lg bg-purple-500/20 text-purple-600">
               <Warehouse className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle>Saldo em Estoque</CardTitle>
-              <CardDescription>Visão geral das quantidades reais e níveis críticos.</CardDescription>
+              <CardTitle className="text-responsive-lg">Saldo em Estoque</CardTitle>
+              <CardDescription className="text-responsive-sm">Visão geral das quantidades reais e níveis críticos.</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -61,12 +61,12 @@ export default function EstoquePage() {
                 label="Produto"
                 render={(_, row) => (
                   <div className="flex flex-col">
-                    <span className="font-medium">{row.produtoNome}</span>
-                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground uppercase font-mono">
-                      <span>{row.produtoCodigo}</span>
+                    <span className="font-medium text-responsive-sm">{row.produtoNome}</span>
+                    <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-muted-foreground uppercase font-mono">
+                      <span className="truncate">{row.produtoCodigo}</span>
                       <span>•</span>
-                      <span className="flex items-center gap-0.5">
-                        <Tag className="h-2.5 w-2.5" />
+                      <span className="flex items-center gap-0.5 truncate">
+                        <Tag className="h-2.5 w-2.5 shrink-0" />
                         {row.categoriaNome}
                       </span>
                     </div>
@@ -81,7 +81,7 @@ export default function EstoquePage() {
                   const isLow = row.quantidadeAtual <= row.estoqueMinimo
                   return (
                     <div className="flex items-center gap-2">
-                      <span className={`text-lg font-bold ${isLow ? 'text-destructive' : 'text-foreground'}`}>
+                      <span className={`text-base sm:text-lg font-bold ${isLow ? 'text-destructive' : 'text-foreground'}`}>
                         {row.quantidadeAtual}
                       </span>
                       <span className="text-xs text-muted-foreground">un</span>
@@ -100,8 +100,8 @@ export default function EstoquePage() {
                 label="Mínimo"
                 render={(_, row) => (
                   <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <AlertTriangle className="h-3.5 w-3.5" />
-                    <span className="text-sm">{row.estoqueMinimo} un</span>
+                    <AlertTriangle className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                    <span className="text-xs sm:text-sm">{row.estoqueMinimo} un</span>
                   </div>
                 )}
               />
@@ -115,10 +115,11 @@ export default function EstoquePage() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleAjuste(row)}
-                      className="gap-2 h-8"
+                      className="gap-2 h-8 text-xs sm:text-sm"
                     >
-                      <Settings2 className="h-3.5 w-3.5" />
-                      Ajustar
+                      <Settings2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                      <span className="hidden sm:inline">Ajustar</span>
+                      <span className="sm:hidden">Ajustar</span>
                     </Button>
                   </div>
                 )}

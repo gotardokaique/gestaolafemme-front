@@ -96,7 +96,6 @@ export default function ConfiguracoesPage() {
           }
         } catch (e: any) {
           if (!mounted) return
-          console.error("Erro ao carregar usuários:", e)
         } finally {
           if (!mounted) return
           setLoadingUsuarios(false)
@@ -137,7 +136,7 @@ export default function ConfiguracoesPage() {
             setUsuarios(resUsuarios.data as UsuarioUnidade[])
           }
         } catch (e) {
-          console.error("Erro ao recarregar usuários:", e)
+          // Erro ao recarregar usuários
         }
       } else {
         toast.error(res.message || "Erro ao criar usuário")
@@ -174,60 +173,60 @@ export default function ConfiguracoesPage() {
   }
 
   return (
-    <div className="gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6">
       <div className="flex-1">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-slate-500/10 text-slate-500">
+          <div className="p-2 rounded-lg bg-slate-500/20 text-slate-600">
             <Settings2 className="h-5 w-5" />
           </div>
           <div className="flex flex-col gap-0.5">
-            <div className="text-2xl font-semibold">Configurações</div>
-            <div className="text-muted-foreground text-sm">
+            <div className="text-responsive-2xl font-semibold">Configurações</div>
+            <div className="text-muted-foreground text-responsive-sm">
               Gerencie seus dados de acesso e preferências.
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Card de Configurações Pessoais */}
-        <Card>
+        <Card className="transition-smooth">
           <CardContent className="pt-6">
             <CardHeader className="px-0 pt-0">
-              <CardTitle>Geral</CardTitle>
+              <CardTitle className="text-responsive-lg">Geral</CardTitle>
             </CardHeader>
 
-            <div className="grid gap-4">
+            <div className="grid gap-3 sm:gap-4">
               <div className="grid gap-2">
-                <Label><Mail className="inline-block h-4 w-4" /> Email  </Label>
+                <Label className="text-xs sm:text-sm"><Mail className="inline-block h-4 w-4" /> Email  </Label>
 
-                <Input value={me?.email ?? (loading ? "Carregando..." : "")} readOnly />
+                <Input value={me?.email ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
               </div>
 
               <div className="grid gap-2">
-                <Label><User className="inline-block h-4 w-4" /> Nome  </Label>
-                <Input value={me?.nome ?? (loading ? "Carregando..." : "")} readOnly />
+                <Label className="text-xs sm:text-sm"><User className="inline-block h-4 w-4" /> Nome  </Label>
+                <Input value={me?.nome ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
               </div>
 
               <div className="grid gap-2">
-                <Label><Building className="inline-block h-4 w-4" /> Unidade  </Label>
-                <Input value={me?.unidadeNome ?? (loading ? "Carregando..." : "")} readOnly />
+                <Label className="text-xs sm:text-sm"><Building className="inline-block h-4 w-4" /> Unidade  </Label>
+                <Input value={me?.unidadeNome ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
               </div>
 
               <div className="grid gap-2">
-                <Label><UserCheck className="inline-block h-4 w-4" /> Perfil  </Label>
-                <Input value={me?.perfilNome ?? (loading ? "Carregando..." : "")} readOnly />
+                <Label className="text-xs sm:text-sm"><UserCheck className="inline-block h-4 w-4" /> Perfil  </Label>
+                <Input value={me?.perfilNome ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
               </div>
 
               <div className="grid gap-2">
-                <Label><UserCog className="inline-block h-4 w-4" /> Descrição do perfil  </Label>
-                <Input value={me?.perfilDescricao ?? (loading ? "Carregando..." : "")} readOnly />
+                <Label className="text-xs sm:text-sm"><UserCog className="inline-block h-4 w-4" /> Descrição do perfil  </Label>
+                <Input value={me?.perfilDescricao ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
               </div>
 
               <div className="flex items-center justify-between rounded-md border p-3">
                 <div className="flex flex-col">
-                  <div className="text-sm font-medium">Tema</div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-xs sm:text-sm font-medium">Tema</div>
+                  <div className="text-muted-foreground text-[10px] sm:text-xs">
                     Trocar tema do sistema
                   </div>
                 </div>
@@ -235,15 +234,15 @@ export default function ConfiguracoesPage() {
               </div>
 
               {/* Botão para criar novo usuário */}
-              <div className="flex items-center justify-between rounded-md border p-3 bg-primary/5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-md border p-3 bg-primary/5 gap-2 sm:gap-0">
                 <div className="flex flex-col">
-                  <div className="text-sm font-medium">Criar Novo Usuário</div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-xs sm:text-sm font-medium">Criar Novo Usuário</div>
+                  <div className="text-muted-foreground text-[10px] sm:text-xs">
                     Gerar credenciais temporárias para um novo usuário
                   </div>
                 </div>
-                <Button onClick={() => setOpenCriarUsuario(true)} size="sm">
-                  <UserPlus className="h-4 w-4 mr-2" />
+                <Button onClick={() => setOpenCriarUsuario(true)} size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
+                  <UserPlus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
                   Criar
                 </Button>
               </div>
@@ -252,47 +251,47 @@ export default function ConfiguracoesPage() {
         </Card>
 
         {/* Card de Usuários da Unidade */}
-        <Card>
+        <Card className="transition-smooth">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-responsive-lg">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
               Usuários da Unidade
             </CardTitle>
           </CardHeader>
           <CardContent>
             {loadingUsuarios ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-muted-foreground text-xs sm:text-sm">
                 Carregando usuários...
               </div>
             ) : usuarios.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-muted-foreground text-xs sm:text-sm">
                 Nenhum usuário encontrado
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {usuarios.map((usuario) => (
                   <div
                     key={usuario.id}
-                    className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
                   >
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-blue-300/50 text-primary font-semibold">
+                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                      <AvatarFallback className="bg-blue-300/50 text-primary font-semibold text-xs sm:text-sm">
                         {getInitials(usuario.nome)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium truncate">{usuario.nome}</p>
+                        <p className="text-xs sm:text-sm font-medium truncate">{usuario.nome}</p>
                         {!usuario.ativo && (
-                          <Badge variant="secondary" className="text-xs">Inativo</Badge>
+                          <Badge variant="secondary" className="text-[10px]">Inativo</Badge>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground truncate">{usuario.email}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{usuario.email}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-[10px]">
                           {usuario.perfilNome}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-[10px] text-muted-foreground">
                           {formatDate(usuario.dataCriacao)}
                         </span>
                       </div>

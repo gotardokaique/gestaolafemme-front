@@ -249,10 +249,14 @@ async function request<TDataSchema extends z.ZodTypeAny | undefined, TData = unk
 
     const parsed = await parseBody(res)
 
-    // erro HTTP: tenta extrair message do envelope/obj/string
     if (!res.ok) {
       if (!opts.keepTokenOnAuthError && (res.status === 401 || res.status === 403)) {
-        if (typeof window !== "undefined") localStorage.removeItem("token")
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("token")
+          window.dispatchEvent(new CustomEvent("auth-error", { 
+            detail: { status: res.status, message: extractMessage(parsed, res.status) }
+          }))
+        }
       }
 
       const msg = extractMessage(parsed, res.status)

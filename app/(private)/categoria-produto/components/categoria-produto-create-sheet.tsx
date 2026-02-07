@@ -56,7 +56,6 @@ export function CategoriaProdutoCreateSheet({ onCreated }: Props) {
 
       onCreated()
     } catch (err: any) {
-      console.error("[CreateCategoriaProduto]", err)
       toast.error(err?.message ?? "Erro ao cadastrar categoria.")
     }
   }

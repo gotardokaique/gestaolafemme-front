@@ -66,7 +66,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
           return // Não redireciona ainda
         }
       } catch (checkError) {
-        console.error("Erro ao verificar troca de senha:", checkError)
         // Continua com o login mesmo se a verificação falhar
       }
 

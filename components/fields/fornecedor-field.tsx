@@ -44,7 +44,6 @@ export function FornecedorField({
       const res = await fornecedorApi.list({ ativo: true });
       setData(res);
     } catch (err) {
-      console.error(err);
       setIsError(true);
       toast.error("Erro ao carregar fornecedores.");
     } finally {

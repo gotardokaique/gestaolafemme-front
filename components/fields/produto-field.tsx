@@ -44,7 +44,6 @@ export function ProdutoField({
       const res = await produtoApi.list(true); // ativoOnly = true
       setData(res);
     } catch (err) {
-      console.error(err);
       setIsError(true);
       toast.error("Erro ao carregar produtos.");
     } finally {

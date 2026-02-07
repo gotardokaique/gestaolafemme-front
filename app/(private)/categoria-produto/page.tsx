@@ -28,16 +28,16 @@ export default function CategoriasProdutoPage() {
   } = useCategoriaProdutoTable()
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <Card className="transition-smooth">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-violet-500/30 text-violet-500">
+            <div className="p-2 rounded-lg bg-violet-500/20 text-violet-600">
               <Tags className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle>Categorias de Produto</CardTitle>
-              <CardDescription>Cadastre e edite as categorias dos seus produtos.</CardDescription>
+              <CardTitle className="text-responsive-lg">Categorias de Produto</CardTitle>
+              <CardDescription className="text-responsive-sm">Cadastre e edite as categorias dos seus produtos.</CardDescription>
             </div>
           </div>
 
@@ -95,32 +95,32 @@ export default function CategoriasProdutoPage() {
                   const descricao = row.descricao || "Sem descrição"
 
                   return (
-                    <div className="flex items-start gap-4">
-                      <div className="h-10 w-10 shrink-0 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-                        <Tags className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+                    <div className="flex items-start gap-2 sm:gap-4">
+                      <div className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                        <Tags className="h-4 w-4 sm:h-5 sm:w-5 text-violet-600 dark:text-violet-400" />
                       </div>
 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <div className="font-medium leading-tight truncate">
+                          <div className="font-medium leading-tight truncate text-responsive-sm">
                             {row.nome ?? "-"}
                           </div>
 
                           {isActive ? (
                             <span className="inline-flex items-center gap-1 text-emerald-600">
-                              <BadgeCheck className="h-4 w-4" />
-                              <span className="text-xs font-medium">Ativo</span>
+                              <BadgeCheck className="h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="text-[10px] sm:text-xs font-medium">Ativo</span>
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-destructive">
-                              <BadgeX className="h-4 w-4" />
-                              <span className="text-xs font-medium">Inativo</span>
+                              <BadgeX className="h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="text-[10px] sm:text-xs font-medium">Inativo</span>
                             </span>
                           )}
                         </div>
 
-                        <div className="mt-1 flex items-start gap-2 text-sm text-muted-foreground">
-                          <StickyNote className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                        <div className="mt-1 flex items-start gap-2 text-xs sm:text-sm text-muted-foreground">
+                          <StickyNote className="mt-0.5 h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
                           <span className="line-clamp-2">{descricao}</span>
                         </div>
                       </div>

@@ -79,8 +79,7 @@ export function CompraCreateSheet({ onCreated }: Props) {
         setFornecedores(fornList)
         setProdutos(prodList)
       }).catch(err => {
-        console.error("[LoadData]", err)
-        toast.error("Erro ao carregar dados auxiliares.")
+        toast.error("Erro ao carregar dados auxiliares.");
       })
     }
   }, [open])
@@ -93,8 +92,7 @@ export function CompraCreateSheet({ onCreated }: Props) {
       toast.success(res.message || "Compra registrada com sucesso!")
       onCreated()
     } catch (err: any) {
-      console.error("[CreateCompra]", err)
-      toast.error(err?.message ?? "Erro ao registrar compra.")
+      toast.error(err?.message ?? "Erro ao registrar compra.");
     }
   }
 
