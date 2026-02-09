@@ -37,6 +37,7 @@ import { categoriaProdutoApi } from "@/services/categoria-produto/categoria-prod
 import type { CategoriaProduto } from "@/services/categoria-produto/categoria-produto.schemas"
 import { NumericInput } from "@/components/ui/numeric-input"
 import { Pencil } from "lucide-react"
+import { FileField, type FileData } from "@/components/fields/file-field"
 
 type Props = {
   produto: Produto | null
@@ -257,6 +258,24 @@ export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
             {errors.estoqueMinimo && (
               <p className="text-sm text-destructive">{errors.estoqueMinimo.message}</p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Foto do Produto</Label>
+            <Controller
+              control={control}
+              name="foto"
+              render={({ field }) => (
+                <FileField
+                  accept=".jpg, .jpeg, .png, .webp"
+                  maxSize={5 * 1024 * 1024}
+                  value={field.value as FileData | null}
+                  onChange={field.onChange}
+                  placeholder="Arraste uma nova imagem ou clique para selecionar"
+                  helperText="Anexe uma nova foto para substituir a atual"
+                />
+              )}
+            />
           </div>
 
           <SheetFooter>

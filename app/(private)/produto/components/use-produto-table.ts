@@ -8,13 +8,12 @@ import type { Produto } from "@/services/produto/produto.schemas"
 export function useProdutoTable() {
   const [data, setData] = React.useState<Produto[]>([])
   const [loading, setLoading] = React.useState(true)
-  const [statusFilter, setStatusFilter] = React.useState<string>("ativos")
 
   const load = React.useCallback(async () => {
     setLoading(true)
     try {
-      const active = statusFilter === "ativos" ? true : statusFilter === "inativos" ? false : undefined
-      const res = await produtoApi.list(active)
+      // Carrega todos os produtos - o filtro é feito pelo TableData.Tabs no cliente
+      const res = await produtoApi.list()
       setData(res)
     } catch (e: any) {
       toast.error(e?.message ?? "Não foi possível carregar produtos.")
@@ -22,7 +21,7 @@ export function useProdutoTable() {
     } finally {
       setLoading(false)
     }
-  }, [statusFilter])
+  }, [])
 
   React.useEffect(() => {
     load()
@@ -53,9 +52,8 @@ export function useProdutoTable() {
     data,
     loading,
     reload: load,
-    statusFilter,
-    setStatusFilter,
     handleStatusChange,
     handleDelete,
   }
 }
+

@@ -12,11 +12,20 @@ export const ProdutoSchema = z.object({
   categoriaNome: z.string(),
   estoqueMinimo: z.number(),
   quantidadeAtual: z.number(),
+  dataCadastro: z.string().optional().nullable(),
 })
 
 export type Produto = z.infer<typeof ProdutoSchema>
 
 export const ProdutoListSchema = z.array(ProdutoSchema)
+
+export const FotoSchema = z.object({
+  nome: z.string(),
+  mimeType: z.string(),
+  arquivo: z.string(),
+}).nullable().optional()
+
+export type FotoDTO = z.infer<typeof FotoSchema>
 
 export const ProdutoRequestSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -29,6 +38,8 @@ export const ProdutoRequestSchema = z.object({
   quantidadeInicial: z.number().min(0, "Quantidade inicial deve ser positiva").optional(),
   ativo: z.boolean().optional(),
   margemLucro: z.number().optional(),
+  foto: FotoSchema,
 })
 
 export type ProdutoRequestDTO = z.infer<typeof ProdutoRequestSchema>
+

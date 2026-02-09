@@ -9,20 +9,23 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { TableData } from "@/components/table-data/table-data"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Condition } from "@/components/table-data/table-conditions"
 import { Badge } from "@/components/ui/badge"
 
 import type { Produto } from "@/services/produto/produto.schemas"
 import { useProdutoTable } from "./components/use-produto-table"
 import { ProdutoCreateSheet } from "./components/produto-create-sheet"
 import { ProdutoEditSheet } from "./components/produto-edit-sheet"
+import { ProdutoDetailSheet } from "./components/produto-detail-sheet"
+import { ProdutoCatalogoSheet } from "./components/produto-catalogo-sheet"
 
-import { Package, Tag, Banknote, Warehouse, MoreVertical, Edit2, Trash2, Power } from "lucide-react"
+import { Package, Tag, Warehouse, MoreVertical, Edit2, Trash2, Power, Eye, Images } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
@@ -32,13 +35,13 @@ export default function ProdutosPage() {
     data,
     loading,
     reload,
-    statusFilter,
-    setStatusFilter,
     handleStatusChange,
     handleDelete
   } = useProdutoTable()
 
   const [editingProduto, setEditingProduto] = React.useState<Produto | null>(null)
+  const [detailingProdutoId, setDetailingProdutoId] = React.useState<number | null>(null)
+  const [catalogoProduto, setCatalogoProduto] = React.useState<Produto | null>(null)
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
@@ -59,20 +62,31 @@ export default function ProdutosPage() {
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4 sm:space-y-6">
-          <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="ativos" className="text-xs sm:text-sm">Ativos</TabsTrigger>
-              <TabsTrigger value="inativos" className="text-xs sm:text-sm">Inativos</TabsTrigger>
-              <TabsTrigger value="todos" className="text-xs sm:text-sm">Todos</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
+        <CardContent>
           <TableData<Produto>
             data={data}
             emptyText={loading ? "Carregando..." : "Nenhum produto encontrado."}
             actionsKey="id"
           >
+            <TableData.Tabs>
+              <TableData.Tab<Produto>
+                label="Ativos"
+                name="ativo"
+                condition={Condition.EQUAL}
+                value={true}
+              />
+              <TableData.Tab<Produto>
+                label="Inativos"
+                name="ativo"
+                condition={Condition.EQUAL}
+                value={false}
+              />
+              {/* <TableData.Tab<Produto>
+                label="Todos"
+                condition={Condition.ALL}
+              /> */}
+            </TableData.Tabs>
+
             <TableData.Columns>
               <TableData.Column<Produto>
                 name="nome"
@@ -151,10 +165,19 @@ export default function ProdutosPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setDetailingProdutoId(row.id)}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        Detalhar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCatalogoProduto(row)}>
+                        <Images className="mr-2 h-4 w-4" />
+                        Catálogo
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setEditingProduto(row)}>
                         <Edit2 className="mr-2 h-4 w-4" />
                         Editar
                       </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => handleStatusChange(row.id)}>
                         <Power className="mr-2 h-4 w-4" />
                         {row.ativo ? 'Desativar' : 'Ativar'}
@@ -179,6 +202,17 @@ export default function ProdutosPage() {
         produto={editingProduto}
         onOpenChange={(open) => !open && setEditingProduto(null)}
         onUpdated={reload}
+      />
+
+      <ProdutoDetailSheet
+        produtoId={detailingProdutoId}
+        onOpenChange={(open) => !open && setDetailingProdutoId(null)}
+      />
+
+      <ProdutoCatalogoSheet
+        produtoId={catalogoProduto?.id ?? null}
+        produtoNome={catalogoProduto?.nome}
+        onOpenChange={(open) => !open && setCatalogoProduto(null)}
       />
     </div>
   )

@@ -36,6 +36,7 @@ import { categoriaProdutoApi } from "@/services/categoria-produto/categoria-prod
 import type { CategoriaProduto } from "@/services/categoria-produto/categoria-produto.schemas"
 import { NumericInput } from "@/components/ui/numeric-input"
 import { PackagePlus } from "lucide-react"
+import { FileField, type FileData } from "@/components/fields/file-field"
 
 type Props = { onCreated: () => void }
 
@@ -64,6 +65,7 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
       estoqueMinimo: 0,
       quantidadeInicial: 0,
       ativo: true,
+      foto: null,
     },
   })
 
@@ -264,6 +266,24 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
                 <p className="text-sm text-destructive">{errors.quantidadeInicial.message}</p>
               )}
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Foto do Produto</Label>
+            <Controller
+              control={control}
+              name="foto"
+              render={({ field }) => (
+                <FileField
+                  accept=".jpg, .jpeg, .png, .webp"
+                  maxSize={5 * 1024 * 1024}
+                  value={field.value as FileData | null}
+                  onChange={field.onChange}
+                  placeholder="Arraste uma imagem ou clique para selecionar"
+                  helperText="Imagem do produto para exibição no catálogo"
+                />
+              )}
+            />
           </div>
 
           <SheetFooter>

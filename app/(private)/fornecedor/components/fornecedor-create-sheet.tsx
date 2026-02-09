@@ -92,14 +92,14 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
 
       {/* ~50% maior */}
       <SheetContent className="sheet-content-standard">
-        <SheetHeader>
+        <SheetHeader className="border-l bg-gradient-to-r from-blue-100/80 to-transparent dark:from-blue-900/30 dark:to-transparent rounded-lg p-3">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
+            <div className="p-2 rounded-lg bg-white text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
               <UserPlus className="h-5 w-5" />
             </div>
             <div>
               <SheetTitle>Novo fornecedor</SheetTitle>
-              <SheetDescription>
+              <SheetDescription className="font-medium text-gray-700 dark:text-gray-100">
                 Preencha os dados para cadastrar um fornecedor.
               </SheetDescription>
             </div>

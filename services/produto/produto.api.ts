@@ -6,6 +6,7 @@ import {
   type Produto,
   type ProdutoRequestDTO,
 } from "./produto.schemas"
+import type { FotoCatalogoRequestDTO } from "@/services/file-preview/file-preview.schemas"
 
 const EmptyDataSchema = z.any()
 
@@ -61,4 +62,27 @@ export const produtoApi = {
     })
     return res
   },
+
+  // ============ Catálogo de Fotos ============
+
+  /**
+   * Adiciona uma foto ao catálogo do produto.
+   */
+  addFotoCatalogo: async (produtoId: number, dto: FotoCatalogoRequestDTO): Promise<number> => {
+    const res = await api.post(`/produtos/${produtoId}/catalogo`, {
+      dataSchema: z.object({ message: z.string(), id: z.number() }),
+      body: dto,
+    })
+    return res.data?.id ?? 0
+  },
+
+  /**
+   * Remove uma foto do catálogo do produto.
+   */
+  removeFotoCatalogo: async (produtoId: number, anexoId: number): Promise<void> => {
+    await api.delete(`/produtos/${produtoId}/catalogo/${anexoId}`, {
+      dataSchema: EmptyDataSchema,
+    })
+  },
 }
+
