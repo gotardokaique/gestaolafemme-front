@@ -34,6 +34,7 @@ import {
   FileText,
   Images,
   Calendar,
+  CalendarCheck,
 } from "lucide-react"
 
 import { produtoApi } from "@/services/produto/produto.api"
@@ -112,6 +113,7 @@ export function ProdutoDetailSheet({ produtoId, onOpenChange }: Props) {
               </SheetDescription>
             </div>
           </div>
+        <Separator />
         </SheetHeader>
 
         <div className="mt-6 space-y-6 pb-10">
@@ -228,14 +230,14 @@ export function ProdutoDetailSheet({ produtoId, onOpenChange }: Props) {
 
                 {/* Código */}
                 <div className="flex items-center gap-2 text-sm">
-                  <Barcode className="h-4 w-4 text-muted-foreground" />
+                  <Barcode className="h-4 w-4 text-black dark:text-white" />
                   <span className="text-muted-foreground">Código:</span>
                   <span className="font-medium font-mono">{produto.codigo}</span>
                 </div>
 
                 {/* Categoria */}
                 <div className="flex items-center gap-2 text-sm">
-                  <Tag className="h-4 w-4 text-muted-foreground" />
+                  <Tag className="h-4 w-4 text-black dark:text-white" />
                   <span className="text-muted-foreground">Categoria:</span>
                   <Badge variant="outline">{produto.categoriaNome}</Badge>
                 </div>
@@ -243,7 +245,7 @@ export function ProdutoDetailSheet({ produtoId, onOpenChange }: Props) {
                 {/* Data de Cadastro */}
                 {produto.dataCadastro && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <CalendarCheck className="h-4 w-4 text-black dark:text-white" />
                     <span className="text-muted-foreground">Cadastrado em:</span>
                     <span className="font-medium">
                       {new Date(produto.dataCadastro).toLocaleDateString('pt-BR', {
@@ -257,12 +259,12 @@ export function ProdutoDetailSheet({ produtoId, onOpenChange }: Props) {
 
                 {/* Descrição */}
                 {produto.descricao && (
-                  <div className="space-y-1">
+                  <div className="space-y-1 ">
                     <span className="text-sm text-muted-foreground">Descrição:</span>
                     <p className="text-sm text-foreground bg-muted/50 rounded-md p-3">
                       {produto.descricao}
                     </p>
-                  </div>
+                  </div>  
                 )}
               </div>
             ) : null}
@@ -283,37 +285,37 @@ export function ProdutoDetailSheet({ produtoId, onOpenChange }: Props) {
             ) : produto ? (
               <div className="grid grid-cols-3 gap-3">
                 {/* Valor Custo */}
-                <div className="p-3 rounded-lg bg-muted/50 border">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                <Card className="p-3 rounded-lg bg-muted/50 border-1 border-yellow-500/40 bg-yellow-200/50">
+                  <div className="flex items-center gap-1.5  text-sm text-yellow-600 dark:text-yellow-400 mb-1 ">
                     <DollarSign className="h-3.5 w-3.5" />
                     Custo
                   </div>
-                  <p className="text-base font-semibold text-foreground">
+                  <p className="text-base font-semibold text-yellow-600 dark:text-yellow-400">
                     {formatCurrency(produto.valorCusto)}
                   </p>
-                </div>
+                </Card>
 
                 {/* Valor Venda */}
-                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400 mb-1">
+                <Card className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <div className="flex items-center gap-1.5 text-sm text-green-600 dark:text-green-400 mb-1">
                     <DollarSign className="h-3.5 w-3.5" />
                     Venda
                   </div>
                   <p className="text-base font-semibold text-green-600 dark:text-green-400">
                     {formatCurrency(produto.valorVenda)}
                   </p>
-                </div>
+                </Card>
 
                 {/* Margem */}
-                <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                  <div className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 mb-1">
+                <Card className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <div className="flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 mb-1">
                     <TrendingUp className="h-3.5 w-3.5" />
                     Margem
                   </div>
                   <p className="text-base font-semibold text-blue-600 dark:text-blue-400">
                     {calcularMargem().toFixed(1)}%
                   </p>
-                </div>
+                </Card>
               </div>
             ) : null}
           </div>
