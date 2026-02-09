@@ -98,14 +98,16 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
       </SheetTrigger>
 
       <SheetContent className="sheet-content-standard">
-        <SheetHeader>
+        <SheetHeader className="border-l bg-gradient-to-r from-blue-100/80 to-transparent dark:from-blue-900/30 dark:to-transparent rounded-lg p-3">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
+            <div className="p-2 rounded-lg bg-white text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
               <UserCog className="h-5 w-5" />
             </div>
             <div>
               <SheetTitle>Editar fornecedor</SheetTitle>
-              <SheetDescription>Atualize as informações do fornecedor.</SheetDescription>
+              <SheetDescription className="font-medium text-gray-700 dark:text-gray-100">
+                Atualize as informações do fornecedor.
+              </SheetDescription>
             </div>
           </div>
         </SheetHeader>
