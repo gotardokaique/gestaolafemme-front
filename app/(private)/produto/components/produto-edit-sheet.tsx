@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { VoiceField } from "@/components/fields/voice-field"
 import { Switch } from "@/components/ui/switch"
 import {
   Sheet,
@@ -194,7 +194,18 @@ export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
 
           <div className="space-y-2">
             <Label>Descrição</Label>
-            <Textarea {...register("descricao")} placeholder="Detalhes do produto" />
+            <Controller
+              control={control}
+              name="descricao"
+              render={({ field }) => (
+                <VoiceField
+                  as="textarea"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  placeholder="Detalhes do produto"
+                />
+              )}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

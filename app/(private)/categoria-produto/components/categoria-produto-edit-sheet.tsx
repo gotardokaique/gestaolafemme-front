@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { VoiceField } from "@/components/fields/voice-field"
 import {
   Sheet,
   SheetContent,
@@ -107,10 +107,20 @@ export function CategoriaProdutoEditSheet({ categoria, onUpdated }: Props) {
 
           <div className="space-y-2">
             <Label htmlFor={`categoria-descricao-${categoria.id}`}>Descrição</Label>
-            <Textarea
-              id={`categoria-descricao-${categoria.id}`}
-              {...register("descricao")}
-              rows={4}
+            <Controller
+              control={control}
+              name="descricao"
+              render={({ field }) => (
+                <VoiceField
+                  as="textarea"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  textareaProps={{
+                    id: `categoria-descricao-${categoria.id}`,
+                    rows: 4
+                  }}
+                />
+              )}
             />
           </div>
 

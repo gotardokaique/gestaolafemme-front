@@ -1,14 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { toast } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { VoiceField } from "@/components/fields/voice-field"
 import {
   Sheet,
   SheetContent,
@@ -38,6 +38,7 @@ export function EstoqueAjusteSheet({ estoque, open, onOpenChange, onUpdated }: P
     register,
     handleSubmit,
     reset,
+    control,
     formState: { isSubmitting, errors },
   } = useForm<EstoqueAjusteDTO>({
     resolver: zodResolver(EstoqueAjusteSchema),
@@ -102,10 +103,18 @@ export function EstoqueAjusteSheet({ estoque, open, onOpenChange, onUpdated }: P
 
           <div className="space-y-2">
             <Label htmlFor="observacao">Motivo do Ajuste</Label>
-            <Textarea
-              id="observacao"
-              placeholder="Ex: Quebra, perda, contagem de inventário..."
-              {...register("observacao")}
+            <Controller
+              control={control}
+              name="observacao"
+              render={({ field }) => (
+                <VoiceField
+                  as="textarea"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  placeholder="Ex: Quebra, perda, contagem de inventário..."
+                  textareaProps={{ id: "observacao" }}
+                />
+              )}
             />
             {errors.observacao && (
               <p className="text-sm text-destructive">{errors.observacao.message}</p>

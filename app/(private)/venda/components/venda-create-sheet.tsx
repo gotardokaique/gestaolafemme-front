@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { VoiceField } from "@/components/fields/voice-field"
 import { DatePicker } from "@/components/ui/date-picker"
 import { ProdutoField } from "@/components/fields/produto-field"
 import {
@@ -191,7 +191,18 @@ export function VendaCreateSheet({ onCreated }: Props) {
 
           <div className="space-y-2">
             <Label>Observação</Label>
-            <Textarea {...register("observacao")} placeholder="Opcional..." />
+            <Controller
+              control={control}
+              name="observacao"
+              render={({ field }) => (
+                <VoiceField
+                  as="textarea"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  placeholder="Opcional..."
+                />
+              )}
+            />
           </div>
 
           <div className="rounded-lg bg-muted p-4 space-y-3">

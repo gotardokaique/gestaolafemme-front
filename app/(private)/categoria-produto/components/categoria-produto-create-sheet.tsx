@@ -1,14 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { toast } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { VoiceField } from "@/components/fields/voice-field"
 import {
   Sheet,
   SheetContent,
@@ -35,6 +35,7 @@ export function CategoriaProdutoCreateSheet({ onCreated }: Props) {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { isSubmitting, errors },
   } = useForm<CategoriaProdutoCreateDTO>({
     resolver: zodResolver(CategoriaProdutoCreateSchema),
@@ -101,10 +102,18 @@ export function CategoriaProdutoCreateSheet({ onCreated }: Props) {
 
           <div className="space-y-2">
             <Label>Descrição</Label>
-            <Textarea
-              {...register("descricao")}
-              placeholder="Descreva a categoria (opcional)"
-              rows={4}
+            <Controller
+              control={control}
+              name="descricao"
+              render={({ field }) => (
+                <VoiceField
+                  as="textarea"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  placeholder="Descreva a categoria (opcional)"
+                  textareaProps={{ rows: 4 }}
+                />
+              )}
             />
           </div>
 
