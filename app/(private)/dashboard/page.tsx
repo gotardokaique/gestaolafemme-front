@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { toast } from "sonner"
-import { DollarSign, ShoppingBag, ShoppingCart, TrendingUp, TrendingDown } from "lucide-react"
+import Link from "next/link"
+import { DollarSign, ShoppingBag, ShoppingCart, TrendingUp, TrendingDown, Package, Tag, Truck } from "lucide-react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { dashboardApi } from "@/services/dashboard/dashboard.api"
@@ -103,10 +104,36 @@ export default function DashboardPage() {
             <CardTitle className="text-responsive-lg">Atalhos Rápidos</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-                <div className="text-sm text-muted-foreground">
-                    Use o menu lateral para acessar as funcionalidades completas.
+            <div className="grid grid-cols-1 gap-3">
+              <Link href="/produto" className="flex items-center gap-4 p-3 rounded-lg border transition-colors group border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <div className="p-2 bg-purple-100 text-purple-600 rounded-md group-hover:bg-purple-200 transition-colors">
+                  <Package className="h-5 w-5" />
                 </div>
+                <div>
+                  <h3 className="font-medium text-sm text-foreground">Produtos</h3>
+                  <p className="text-xs text-muted-foreground">Gerenciar catálogo</p>
+                </div>
+              </Link>
+              
+              <Link href="/categoria-produto" className="flex items-center gap-4 p-3 rounded-lg border  transition-colors group border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <div className="p-2 bg-pink-100 text-pink-600 rounded-md group-hover:bg-pink-200 transition-colors">
+                  <Tag className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm text-foreground">Categorias</h3>
+                  <p className="text-xs text-muted-foreground">Organizar produtos</p>
+                </div>
+              </Link>
+
+              <Link href="/fornecedor" className="flex items-center gap-4 p-3 rounded-lg border transition-colors group border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <div className="p-2 bg-blue-100 text-blue-600 rounded-md group-hover:bg-blue-200 transition-colors">
+                  <Truck className="h-5 w-5" /> 
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm text-foreground">Fornecedores</h3>
+                  <p className="text-xs text-muted-foreground">Gestão de parceiros</p>
+                </div>
+              </Link>
             </div>
           </CardContent>
         </Card>
