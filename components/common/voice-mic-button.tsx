@@ -52,13 +52,14 @@ export function VoiceMicButton({
     },
   })
 
-  // NOVO: quando resetKey muda, limpamos o histórico do reconhecimento
+    // NOVO: quando resetKey muda, limpamos o histórico do reconhecimento
   React.useEffect(() => {
     if (resetKey === undefined) return
     // se estiver ouvindo, pare antes de resetar
-    if (isListening) stop()
+    stop()
     reset()
-  }, [resetKey, isListening, stop, reset])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetKey])
 
   const isDisabled = disabled || !isSupported
 

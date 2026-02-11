@@ -302,6 +302,7 @@ export function useSpeechToText(
       setError(null)
 
       rec.start()
+      console.log("[Voice] Microphone started")
     } catch {
       isListeningRef.current = false
       setIsListening(false)
@@ -317,10 +318,12 @@ export function useSpeechToText(
     clearRestartTimer()
     try {
       recognitionRef.current?.stop()
+      console.log("[Voice] Microphone stopped")
     } catch {}
   }, [clearRestartTimer])
 
   const toggle = React.useCallback(() => {
+    console.log("[Voice] Toggle called. Currently listening:", isListeningRef.current)
     isListeningRef.current ? stop() : start()
   }, [start, stop])
 
