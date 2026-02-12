@@ -28,10 +28,6 @@ type NextFetchRequestConfig = {
   tags?: string[]
 }
 
-/**
- * ENVELOPE PADRÃO DO BACK:
- * { success: boolean, message?: string|null, data?: T|null }
- */
 export const ApiEnvelopeSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
     success: z.boolean(),
@@ -49,13 +45,11 @@ type RequestOptions<TDataSchema extends z.ZodTypeAny | undefined> = {
   params?: Record<string, unknown>
   body?: unknown
   headers?: Record<string, string>
-  dataSchema?: TDataSchema // <<< agora você passa só o schema do data
-  skipAuth?: boolean
+  dataSchema?: TDataSchema
   signal?: AbortSignal
   timeoutMs?: number
   cache?: RequestCache
   next?: NextFetchRequestConfig
-  keepTokenOnAuthError?: boolean
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -67,148 +61,55 @@ function assertApiUrl() {
 function buildQuery(params?: Record<string, unknown>) {
   if (!params) return ""
   const usp = new URLSearchParams()
-
   for (const [k, v] of Object.entries(params)) {
     if (v === undefined || v === null) continue
-
     if (Array.isArray(v)) {
-      for (const item of v) {
-        if (item === undefined || item === null) continue
-        usp.append(k, String(item))
-      }
+      v.forEach(item => item != null && usp.append(k, String(item)))
       continue
     }
-
     usp.set(k, String(v))
   }
-
   const qs = usp.toString()
   return qs ? `?${qs}` : ""
 }
 
-function base64UrlDecodeToString(input: string) {
-  const normalized = input.replace(/-/g, "+").replace(/_/g, "/")
-  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=")
-  return atob(padded)
-}
-
-function getValidToken(): string | null {
-  if (typeof window === "undefined") return null
-
-  const token = localStorage.getItem("token")
-  if (!token) return null
-
-  try {
-    const parts = token.split(".")
-    if (parts.length < 2) throw new Error("JWT inválido")
-
-    const payloadJson = base64UrlDecodeToString(parts[1])
-    const payload = JSON.parse(payloadJson)
-
-    const exp = Number(payload?.exp)
-    if (!exp) return token
-
-    const now = Math.floor(Date.now() / 1000)
-    if (now >= exp - 30) {
-      localStorage.removeItem("token")
-      return null
-    }
-
-    return token
-  } catch {
-    localStorage.removeItem("token")
-    return null
-  }
-}
-
-/**
- * Parse robusto:
- * - tenta JSON se content-type for json
- * - se não for, mas o texto "parece" json, tenta parse também
- */
 async function parseBody(res: Response): Promise<unknown> {
   if (res.status === 204 || res.status === 205) return undefined
-
-  const len = res.headers.get("content-length")
-  if (len === "0") return undefined
-
   const ct = (res.headers.get("content-type") ?? "").toLowerCase()
-
   try {
     const raw = await res.text()
-    if (!raw || !raw.trim()) return undefined
-
-    if (ct.includes("application/json")) {
-      try {
-        return JSON.parse(raw)
-      } catch {
-        return raw
-      }
+    if (!raw?.trim()) return undefined
+    if (ct.includes("application/json") || (raw.startsWith("{") || raw.startsWith("["))) {
+      return JSON.parse(raw)
     }
-
-    const t = raw.trim()
-    if ((t.startsWith("{") && t.endsWith("}")) || (t.startsWith("[") && t.endsWith("]"))) {
-      try {
-        return JSON.parse(t)
-      } catch {
-        return raw
-      }
-    }
-
     return raw
-  } catch {
-    return undefined
-  }
+  } catch { return undefined }
 }
 
 function extractMessage(details: unknown, status: number): string {
-  if (typeof details === "string" && details.trim()) return details.trim()
-
+  if (typeof details === "string") return details.trim()
   if (details && typeof details === "object") {
     const any = details as any
-
-    // suporta envelope padrão
-    if (typeof any.message === "string" && any.message.trim()) return any.message.trim()
-    if (typeof any.mensagem === "string" && any.mensagem.trim()) return any.mensagem.trim()
-    if (typeof any.error === "string" && any.error.trim()) return any.error.trim()
-
-    // às vezes vem { data: { message } }
-    if (any.data && typeof any.data === "object") {
-      const d = any.data as any
-      if (typeof d.message === "string" && d.message.trim()) return d.message.trim()
-      if (typeof d.mensagem === "string" && d.mensagem.trim()) return d.mensagem.trim()
-    }
+    const msg = any.message || any.mensagem || any.error || any.data?.message || any.data?.mensagem
+    if (msg) return String(msg).trim()
   }
-
   return `Erro HTTP ${status}`
 }
 
 function buildSignal(userSignal?: AbortSignal, timeoutMs?: number) {
   if (!timeoutMs && !userSignal) return undefined
-
   const controller = new AbortController()
-
   if (userSignal) {
     if (userSignal.aborted) controller.abort(userSignal.reason)
-    else {
-      const onAbort = () => controller.abort(userSignal.reason)
-      userSignal.addEventListener("abort", onAbort, { once: true })
-    }
+    else userSignal.addEventListener("abort", () => controller.abort(userSignal.reason), { once: true })
   }
-
-  let timeoutId: ReturnType<typeof setTimeout> | undefined
+  let timeoutId: ReturnType<typeof setTimeout>
   if (timeoutMs && timeoutMs > 0) {
     timeoutId = setTimeout(() => controller.abort(new Error("Request timeout")), timeoutMs)
   }
-
   return { signal: controller.signal, cleanup: () => timeoutId && clearTimeout(timeoutId) }
 }
 
-/**
- * request() agora SEMPRE retorna ApiEnvelope<T>
- * - success=false vira ApiError
- * - message SEMPRE acessível pra toast
- */
 async function request<TDataSchema extends z.ZodTypeAny | undefined, TData = unknown>(
   method: HttpMethod,
   path: string,
@@ -217,22 +118,13 @@ async function request<TDataSchema extends z.ZodTypeAny | undefined, TData = unk
   assertApiUrl()
 
   const url = `${API_URL}${path}${buildQuery(opts.params)}`
-  const token = opts.skipAuth ? null : getValidToken()
+  const headers: Record<string, string> = { Accept: "application/json", ...opts.headers }
 
-  const headers: Record<string, string> = {
-    Accept: "application/json",
-    ...opts.headers,
-  }
-
-  const hasBody = opts.body !== undefined && opts.body !== null
   let body: BodyInit | undefined
-
-  if (hasBody) {
+  if (opts.body != null) {
     headers["Content-Type"] = headers["Content-Type"] ?? "application/json"
     body = JSON.stringify(opts.body)
   }
-
-  if (token) headers.Authorization = `Bearer ${token}`
 
   const sig = buildSignal(opts.signal, opts.timeoutMs)
 
@@ -244,45 +136,40 @@ async function request<TDataSchema extends z.ZodTypeAny | undefined, TData = unk
       signal: sig?.signal,
       cache: opts.cache,
       next: opts.next as any,
-      credentials: "same-origin",
+      credentials: "include", // ESSENCIAL: Envia/Recebe cookies HttpOnly
     })
 
     const parsed = await parseBody(res)
 
     if (!res.ok) {
-      if (!opts.keepTokenOnAuthError && (res.status === 401 || res.status === 403)) {
+      if (res.status === 401 || res.status === 403) {
         if (typeof window !== "undefined") {
-          localStorage.removeItem("token")
-          window.dispatchEvent(new CustomEvent("auth-error", { 
+          window.dispatchEvent(new CustomEvent("auth-error", {
             detail: { status: res.status, message: extractMessage(parsed, res.status) }
           }))
         }
       }
-
-      const msg = extractMessage(parsed, res.status)
-      throw new ApiError(msg, res.status, parsed, { url, method })
+      throw new ApiError(extractMessage(parsed, res.status), res.status, parsed, { url, method })
     }
 
     const envelopeSchema = ApiEnvelopeSchema(opts.dataSchema ?? z.any())
     const envSafe = envelopeSchema.safeParse(parsed)
+
     if (envSafe.success) {
-      const env = envSafe.data as ApiEnvelope<any>
-      if (!env.success) {
-        throw new ApiError(env.message ?? "Erro.", res.status, env, { url, method })
+      if (!envSafe.data.success) {
+        throw new ApiError(envSafe.data.message ?? "Erro na operação.", res.status, envSafe.data, { url, method })
       }
-      return env as any
+      return envSafe.data as any
     }
 
     if (opts.dataSchema) {
-      const data = opts.dataSchema.parse(parsed) as any
-      return { success: true, message: null, data } as any
+      return { success: true, message: null, data: opts.dataSchema.parse(parsed) } as any
     }
 
     return { success: true, message: null, data: parsed as any } as any
+
   } catch (err: any) {
-    if (err?.name === "AbortError") {
-      throw new ApiError("Requisição cancelada.", 499, undefined, { url, method })
-    }
+    if (err?.name === "AbortError") throw new ApiError("Timeout da requisição.", 499, undefined, { url, method })
     if (err instanceof ApiError) throw err
     throw new ApiError(err?.message ?? "Falha de rede.", 0, undefined, { url, method })
   } finally {
@@ -291,24 +178,15 @@ async function request<TDataSchema extends z.ZodTypeAny | undefined, TData = unk
 }
 
 export const api = {
-  get: <TDataSchema extends z.ZodTypeAny | undefined>(path: string, opts?: RequestOptions<TDataSchema>) =>
-    request<TDataSchema>("GET", path, opts),
+  get: <TS extends z.ZodTypeAny | undefined>(p: string, o?: RequestOptions<TS>) => request<TS>("GET", p, o),
+  post: <TS extends z.ZodTypeAny | undefined>(p: string, o?: RequestOptions<TS>) => request<TS>("POST", p, o),
+  put: <TS extends z.ZodTypeAny | undefined>(p: string, o?: RequestOptions<TS>) => request<TS>("PUT", p, o),
+  patch: <TS extends z.ZodTypeAny | undefined>(p: string, o?: RequestOptions<TS>) => request<TS>("PATCH", p, o),
+  delete: <TS extends z.ZodTypeAny | undefined>(p: string, o?: RequestOptions<TS>) => request<TS>("DELETE", p, o),
 
-  post: <TDataSchema extends z.ZodTypeAny | undefined>(path: string, opts?: RequestOptions<TDataSchema>) =>
-    request<TDataSchema>("POST", path, opts),
-
-  put: <TDataSchema extends z.ZodTypeAny | undefined>(path: string, opts?: RequestOptions<TDataSchema>) =>
-    request<TDataSchema>("PUT", path, opts),
-
-  patch: <TDataSchema extends z.ZodTypeAny | undefined>(path: string, opts?: RequestOptions<TDataSchema>) =>
-    request<TDataSchema>("PATCH", path, opts),
-
-  delete: <TDataSchema extends z.ZodTypeAny | undefined>(path: string, opts?: RequestOptions<TDataSchema>) =>
-    request<TDataSchema>("DELETE", path, opts),
-
-  token: {
-    getValid: getValidToken,
-    clear: () => typeof window !== "undefined" && localStorage.removeItem("token"),
-    set: (t: string) => typeof window !== "undefined" && localStorage.setItem("token", t),
-  },
+  // Logout agora é uma chamada de API, pois só o back pode "limpar" o cookie HttpOnly
+  logout: async () => {
+    try { await request("POST", "/auth/logout"); }
+    finally { window.location.href = "/login"; }
+  }
 }

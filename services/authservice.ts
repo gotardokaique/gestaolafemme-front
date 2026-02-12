@@ -7,7 +7,7 @@ export type LoginInput = {
 }
 
 export type LoginResponse = {
-  token: string
+  success: boolean
 }
 
 export class AuthServiceError extends Error {
@@ -19,14 +19,11 @@ export class AuthServiceError extends Error {
   }
 }
 
-const LoginDataSchema = z.object({
-  token: z.string().min(10),
-})
+const LoginDataSchema = z.any().optional()
 
 export const login = async (input: LoginInput): Promise<LoginResponse> => {
   try {
-    const res = await api.post("/auth/login", {
-      skipAuth: true,
+    await api.post("/auth/login", {
       dataSchema: LoginDataSchema,
       body: {
         email: input.email,
@@ -34,16 +31,18 @@ export const login = async (input: LoginInput): Promise<LoginResponse> => {
       },
     })
 
-    const token = res.data?.token
-    if (!token) throw new AuthServiceError("Token não retornado no login.", 500)
-    return { token }
+    return { success: true }
   } catch (err: any) {
-    // seu api.ts lança ApiError em erro HTTP / success=false
-    const msg = err?.message ?? "Erro desconhecido"
     const status = err?.status
-    throw new AuthServiceError(
-      status === 401 ? "Usuário ou senha inválidos." : msg,
-      status
-    )
+
+    if (status === 401) {
+      throw new AuthServiceError("Credenciais inválidas. Verifique e-mail e senha.", 401)
+    }
+
+    if (status === 429) {
+      throw new AuthServiceError("Muitas tentativas. Tente novamente mais tarde.", 429)
+    }
+
+    throw new AuthServiceError(err?.message ?? "Falha na comunicação com o servidor.", status)
   }
 }

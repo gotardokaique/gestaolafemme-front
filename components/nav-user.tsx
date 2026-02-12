@@ -49,9 +49,9 @@ export function NavUser({
     try {
       await api.post("/auth/logout")
     } catch {
-      // Ignorar erro de backend no logout
+      //segue a vida
     } finally {
-      api.token.clear()
+      // O browser já limpou o cookie pelo header do back. 
       router.push("/login")
     }
   }

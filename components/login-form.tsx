@@ -51,22 +51,17 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
     setIsLoading(true)
     try {
-      const { token } = await login({ email, password })
-      localStorage.setItem("token", token)
-
-      // Verifica se o usuário precisa trocar a senha
+      const response = await login({ email, password })
       try {
         const checkResponse = await api.get("/users/check-trocar-senha")
 
         if (checkResponse.success && (checkResponse.data as any)?.precisaTrocarSenha) {
-          // Usuário precisa trocar senha
           toast.warning("Você precisa alterar sua senha por questões de segurança")
           setShowTrocarSenha(true)
           setIsLoading(false)
-          return // Não redireciona ainda
+          return
         }
       } catch (checkError) {
-        // Continua com o login mesmo se a verificação falhar
       }
 
       toast.success("Login realizado com sucesso!")
