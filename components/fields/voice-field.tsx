@@ -51,8 +51,8 @@ export function VoiceField({
   }
 
   return (
-    <div className={cn("relative flex items-start gap-2", className)}>
-      <div className="flex-1 relative">
+    <div className={cn("relative flex items-start gap-2 w-full", className)}>
+      <div className="flex-1 relative min-w-0">
         {isTextarea ? (
           <Textarea
             {...(textareaProps ?? {})}
