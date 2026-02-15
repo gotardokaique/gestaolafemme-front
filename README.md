@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💎 Gestão LaFemme Front
 
-## Getting Started
+Frontend da aplicação Gestão LaFemme, desenvolvido com foco em organização operacional, experiência do usuário e integração segura com a API backend.
 
-First, run the development server:
+Aplicação moderna construída com tecnologias React/Next.js, arquitetura modular e integração com autenticação JWT.
+
+---
+
+## 🚀 Visão Geral
+
+O frontend fornece interface completa para:
+
+- 🔐 Autenticação de usuários
+- 👤 Gestão de usuários e perfis
+- 📦 Cadastro e gerenciamento de produtos
+- 🗂 Organização por categorias
+- 📊 Controle de estoque
+- 🔄 Visualização de movimentações
+- 🧾 Registro de vendas
+- 🤝 Gestão de fornecedores
+- 📈 Dashboards e relatórios
+- ⚙️ Integração direta com API REST
+
+---
+
+## 🏗 Stack Tecnológica
+
+- ⚛ React / Next.js
+- 🟦 TypeScript
+- 🎨 TailwindCSS / UI Components
+- 🔐 JWT Authentication
+- 🔄 React Query / Fetch API
+- 📦 Node.js
+- 🐳 Docker
+
+---
+
+## 🧠 Arquitetura
+
+O projeto segue princípios de:
+
+- Componentização modular
+- Separação clara entre UI e lógica de dados
+- Hooks personalizados
+- Integração desacoplada com backend
+- Controle de autenticação via token
+- Estrutura escalável para crescimento do sistema
+
+---
+
+## 📂 Estrutura do Projeto
+
+```
+src/
+│
+├── app/                # Rotas e páginas
+├── components/         # Componentes reutilizáveis
+├── services/           # Integração com API
+├── hooks/              # Hooks customizados
+├── contexts/           # Contextos globais
+├── utils/              # Utilitários
+└── styles/             # Estilos globais
+```
+
+---
+
+## ▶️ Executando Localmente
+
+Instalar dependências:
+
+```bash
+npm install
+```
+
+Rodar aplicação:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build para produção:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔧 Configuração de Ambiente
 
-## Learn More
+Criar arquivo `.env.local`:
 
-To learn more about Next.js, take a look at the following resources:
+```
+NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎯 Objetivos do Projeto
 
-## Deploy on Vercel
+- Interface profissional e responsiva
+- Performance otimizada
+- Experiência de usuário intuitiva
+- Integração segura com backend
+- Estrutura preparada para evolução contínua
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔒 Segurança
+
+- Controle de rotas autenticadas
+- Proteção de páginas privadas
+- Armazenamento controlado de tokens
+- Integração com backend seguro
+
+---
+
+## 📜 License
+
+Proprietary – All Rights Reserved.
+
+This software is publicly visible for evaluation and portfolio purposes only.
+Unauthorized use, modification, distribution, or deployment is strictly prohibited.
+
+See the LICENSE file for full legal terms.
