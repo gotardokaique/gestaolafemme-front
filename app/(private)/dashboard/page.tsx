@@ -38,9 +38,7 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-4 sm:gap-6">
       <h1 className="text-responsive-2xl font-bold tracking-tight">Dashboard</h1>
 
-      {/* Cards de Métricas */}
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {/* Saldo Atual */}
         <Card className="transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Saldo Atual</CardTitle>
@@ -56,7 +54,6 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Vendas no Mês */}
         <Card className="transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Vendas (Mês)</CardTitle>
@@ -71,7 +68,6 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Compras no Mês */}
         <Card className="transition-smooth hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Compras (Mês)</CardTitle>
@@ -114,7 +110,7 @@ export default function DashboardPage() {
                   <p className="text-xs text-muted-foreground">Gerenciar catálogo</p>
                 </div>
               </Link>
-              
+
               <Link href="/categoria-produto" className="flex items-center gap-4 p-3 rounded-lg border  transition-colors group border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 <div className="p-2 bg-pink-100 text-pink-600 rounded-md group-hover:bg-pink-200 transition-colors">
                   <Tag className="h-5 w-5" />
@@ -127,7 +123,7 @@ export default function DashboardPage() {
 
               <Link href="/fornecedor" className="flex items-center gap-4 p-3 rounded-lg border transition-colors group border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 <div className="p-2 bg-blue-100 text-blue-600 rounded-md group-hover:bg-blue-200 transition-colors">
-                  <Truck className="h-5 w-5" /> 
+                  <Truck className="h-5 w-5" />
                 </div>
                 <div>
                   <h3 className="font-medium text-sm text-foreground">Fornecedores</h3>

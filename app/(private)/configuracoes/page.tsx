@@ -49,14 +49,12 @@ type UsuarioUnidade = z.infer<typeof UsuarioUnidadeSchema>
 export default function ConfiguracoesPage() {
   const [loading, setLoading] = React.useState(true)
   const [me, setMe] = React.useState<UserMe | null>(null)
-  
-  // Estados para criação de novo usuário
+
   const [openCriarUsuario, setOpenCriarUsuario] = React.useState(false)
   const [criandoUsuario, setCriandoUsuario] = React.useState(false)
   const [novoUsuarioNome, setNovoUsuarioNome] = React.useState("")
   const [novoUsuarioEmail, setNovoUsuarioEmail] = React.useState("")
-  
-  // Estados para exibir credenciais geradas
+
   const [showCredenciais, setShowCredenciais] = React.useState(false)
   const [credenciaisGeradas, setCredenciaisGeradas] = React.useState<{
     email: string
@@ -65,7 +63,6 @@ export default function ConfiguracoesPage() {
   } | null>(null)
   const [copiado, setCopiado] = React.useState(false)
 
-  // Estados para lista de usuários da unidade
   const [usuarios, setUsuarios] = React.useState<UsuarioUnidade[]>([])
   const [loadingUsuarios, setLoadingUsuarios] = React.useState(true)
 
@@ -87,7 +84,6 @@ export default function ConfiguracoesPage() {
           setLoading(false)
         }
 
-        // Carrega usuários da unidade
         try {
           const resUsuarios = await api.get("/users/usuarios-unidade")
           if (!mounted) return
@@ -128,15 +124,13 @@ export default function ConfiguracoesPage() {
         setNovoUsuarioNome("")
         setNovoUsuarioEmail("")
         toast.success("Usuário criado com sucesso!")
-        
-        // Recarrega a lista de usuários
+
         try {
           const resUsuarios = await api.get("/users/usuarios-unidade")
           if (resUsuarios.success && resUsuarios.data) {
             setUsuarios(resUsuarios.data as UsuarioUnidade[])
           }
         } catch (e) {
-          // Erro ao recarregar usuários
         }
       } else {
         toast.error(res.message || "Erro ao criar usuário")
@@ -150,12 +144,12 @@ export default function ConfiguracoesPage() {
 
   const copiarCredenciais = () => {
     if (!credenciaisGeradas) return
-    
+
     const texto = `Email: ${credenciaisGeradas.email}\nSenha Temporária: ${credenciaisGeradas.senhaTemporaria}\n\n${credenciaisGeradas.mensagem}`
     navigator.clipboard.writeText(texto)
     setCopiado(true)
     toast.success("Credenciais copiadas!")
-    
+
     setTimeout(() => setCopiado(false), 2000)
   }
 
@@ -189,7 +183,6 @@ export default function ConfiguracoesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Card de Configurações Pessoais */}
         <Card className="transition-smooth">
           <CardContent className="pt-6">
             <CardHeader className="px-0 pt-0">
@@ -233,7 +226,6 @@ export default function ConfiguracoesPage() {
                 <ModeToggle />
               </div>
 
-              {/* Botão para criar novo usuário */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-md border p-3 bg-primary/5 gap-2 sm:gap-0">
                 <div className="flex flex-col">
                   <div className="text-xs sm:text-sm font-medium">Criar Novo Usuário</div>
@@ -250,7 +242,6 @@ export default function ConfiguracoesPage() {
           </CardContent>
         </Card>
 
-        {/* Card de Usuários da Unidade */}
         <Card className="transition-smooth">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-responsive-lg">
@@ -304,7 +295,6 @@ export default function ConfiguracoesPage() {
         </Card>
       </div>
 
-      {/* Dialog para criar novo usuário */}
       <Dialog open={openCriarUsuario} onOpenChange={setOpenCriarUsuario}>
         <DialogContent>
           <DialogHeader>
