@@ -143,7 +143,7 @@ async function request<TDataSchema extends z.ZodTypeAny | undefined, TData = unk
 
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
-        if (typeof window !== "undefined") {
+        if (typeof window !== "undefined" && !path.includes("/auth/login")) {
           window.dispatchEvent(new CustomEvent("auth-error", {
             detail: { status: res.status, message: extractMessage(parsed, res.status) }
           }))

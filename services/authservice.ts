@@ -35,9 +35,9 @@ export const login = async (input: LoginInput): Promise<LoginResponse> => {
   } catch (err: any) {
     const status = err?.status
 
-    if (status === 401) {
-      throw new AuthServiceError("Credenciais inválidas. Verifique e-mail e senha.", 401)
-    }
+    // if (status === 401) {
+    //   throw new AuthServiceError("Credenciais inválidas. Verifique e-mail e senha.", 401)
+    // }
 
     if (status === 429) {
       throw new AuthServiceError("Muitas tentativas. Tente novamente mais tarde.", 429)
