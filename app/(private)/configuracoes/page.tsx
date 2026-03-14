@@ -3,7 +3,6 @@
 import * as React from "react"
 import { z } from "zod"
 import { toast } from "@/components/ui/sonner"
-import { ModeToggle } from "@/components/mode-togle"
 import { api } from "@/lib/api"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -20,7 +19,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, Key, Webhook, Trash2, Eye, EyeOff, Send, Info } from "lucide-react"
+import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, Key, Webhook, Trash2, Eye, EyeOff, Send, Info, Copy, CheckCircle2 } from "lucide-react"
+import { ModeToggle } from "@/components/mode-togle"
 
 const UserMeSchema = z.object({
   id: z.number(),
@@ -65,11 +65,11 @@ export default function ConfiguracoesPage() {
   const [showToken, setShowToken] = React.useState(false)
   const [openRevogarToken, setOpenRevogarToken] = React.useState(false)
 
-  // --- Email Config ---
   const [emailRemetente, setEmailRemetente] = React.useState("")
   const [emailSenhaApp, setEmailSenhaApp] = React.useState("")
   const [showEmailSenha, setShowEmailSenha] = React.useState(false)
   const [salvandoEmail, setSalvandoEmail] = React.useState(false)
+  const [hasSenhaApp, setHasSenhaApp] = React.useState(false)
 
   React.useEffect(() => {
     let mounted = true
@@ -115,9 +115,10 @@ export default function ConfiguracoesPage() {
         try {
           const resEmail = await api.get("/configuracao/email")
           if (!mounted) return
-          const dataEmail = resEmail.data as { emailRemetente?: string } | undefined
-          if (resEmail.success && dataEmail?.emailRemetente) {
-            setEmailRemetente(dataEmail.emailRemetente)
+          const dataEmail = resEmail.data as { emailRemetente?: string, hasSenhaApp?: boolean } | undefined
+          if (resEmail.success && dataEmail) {
+            setEmailRemetente(dataEmail.emailRemetente || "")
+            setHasSenhaApp(!!dataEmail.hasSenhaApp)
           }
         } catch (e: any) {
         }
@@ -238,6 +239,7 @@ export default function ConfiguracoesPage() {
       if (res.success) {
         toast.success("Configurações de e-mail salvas com sucesso!")
         setEmailSenhaApp("")
+        setHasSenhaApp(true)
       } else {
         toast.error(res.message || "Erro ao salvar configurações de e-mail")
       }
@@ -248,150 +250,112 @@ export default function ConfiguracoesPage() {
     }
   }
 
+  const handleDeletarEmailConfig = async () => {
+    setSalvandoEmail(true)
+    try {
+      await api.delete("/configuracao/email")
+      toast.success("Configurações de e-mail removidas.")
+      setEmailRemetente("")
+      setEmailSenhaApp("")
+      setHasSenhaApp(false)
+    } catch (e: any) {
+      toast.error("Erro ao remover configurações de e-mail")
+    } finally {
+      setSalvandoEmail(false)
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-4 sm:gap-6">
-      <div className="flex-1">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-slate-500/20 text-slate-600">
-            <Settings2 className="h-5 w-5" />
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <div className="text-responsive-2xl font-semibold">Configurações</div>
-            <div className="text-muted-foreground text-responsive-sm">
-              Gerencie seus dados de acesso e preferências.
-            </div>
-          </div>
+    <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="flex items-center gap-3 mb-6 sm:mb-8">
+        <div className="p-2 rounded-lg bg-primary/10 text-primary">
+          <Settings2 className="h-6 w-6" />
+        </div>
+        <div className="flex flex-col gap-0.5">
+          <h1 className="text-2xl font-bold tracking-tight">Configurações</h1>
+          <p className="text-muted-foreground text-sm">
+            Gerencie seus dados de acesso e preferências.
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <Card className="transition-smooth">
-          <CardContent className="pt-6">
-            <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-responsive-lg">Geral</CardTitle>
-            </CardHeader>
-
-            <div className="grid gap-3 sm:gap-4">
-              <div className="grid gap-2">
-                <Label className="text-xs sm:text-sm"><Mail className="inline-block h-4 w-4" /> Email  </Label>
-
-                <Input value={me?.email ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6 items-start">
+        {/* Coluna Principal (Esquerda) */}
+        <div className="w-full flex flex-col gap-6 min-w-0">
+          
+          {/* Card: Geral */}
+          <Card className="bg-card rounded-xl border border-border shadow-sm">
+            <div className="px-6 py-4 border-b border-border flex items-center gap-2">
+              <UserCog className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <h2 className="font-semibold text-base">Geral</h2>
+                <p className="text-sm text-muted-foreground">Informações principais da sua conta</p>
               </div>
-
-              <div className="grid gap-2">
-                <Label className="text-xs sm:text-sm"><User className="inline-block h-4 w-4" /> Nome  </Label>
-                <Input value={me?.nome ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
-              </div>
-
-              <div className="grid gap-2">
-                <Label className="text-xs sm:text-sm"><Building className="inline-block h-4 w-4" /> Unidade  </Label>
-                <Input value={me?.unidadeNome ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
-              </div>
-
-              <div className="grid gap-2">
-                <Label className="text-xs sm:text-sm"><UserCheck className="inline-block h-4 w-4" /> Perfil  </Label>
-                <Input value={me?.perfilNome ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
-              </div>
-
-              <div className="grid gap-2">
-                <Label className="text-xs sm:text-sm"><UserCog className="inline-block h-4 w-4" /> Descrição do perfil  </Label>
-                <Input value={me?.perfilDescricao ?? (loading ? "Carregando..." : "")} readOnly className="text-xs sm:text-sm" />
-              </div>
-
-              <div className="flex items-center justify-between rounded-md border p-3">
-                <div className="flex flex-col">
-                  <div className="text-xs sm:text-sm font-medium">Tema</div>
-                  <div className="text-muted-foreground text-[10px] sm:text-xs">
-                    Trocar tema do sistema
-                  </div>
+            </div>
+            
+            <div className="px-6 py-6 space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-muted/50 rounded-lg px-4 py-3">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Nome</div>
+                  <div className="text-sm font-medium text-foreground">{me?.nome ?? (loading ? "Carregando..." : "")}</div>
                 </div>
-                <ModeToggle />
+                <div className="bg-muted/50 rounded-lg px-4 py-3">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Email</div>
+                  <div className="text-sm font-medium text-foreground">{me?.email ?? (loading ? "Carregando..." : "")}</div>
+                </div>
+                <div className="bg-muted/50 rounded-lg px-4 py-3">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Unidade</div>
+                  <div className="text-sm font-medium text-foreground">{me?.unidadeNome ?? (loading ? "Carregando..." : "")}</div>
+                </div>
+                <div className="bg-muted/50 rounded-lg px-4 py-3">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Perfil</div>
+                  <div className="text-sm font-medium text-foreground">{me?.perfilNome ?? (loading ? "Carregando..." : "")}</div>
+                </div>
+                <div className="bg-muted/50 rounded-lg px-4 py-3 sm:col-span-2">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Descrição do perfil</div>
+                  <div className="text-sm font-medium text-foreground">{me?.perfilDescricao ?? (loading ? "Carregando..." : "")}</div>
+                </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-md border p-3 bg-primary/5 gap-2 sm:gap-0">
+              <div className="border-t border-border pt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
                 <div className="flex flex-col">
-                  <div className="text-xs sm:text-sm font-medium">Criar Novo Usuário</div>
-                  <div className="text-muted-foreground text-[10px] sm:text-xs">
+                  <div className="font-medium text-sm">Criar Novo Usuário</div>
+                  <div className="text-muted-foreground text-sm">
                     Gerar credenciais temporárias para um novo usuário
                   </div>
                 </div>
-                <Button onClick={() => setOpenCriarUsuario(true)} size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
-                  <UserPlus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
-                  Criar
+                <Button 
+                  onClick={() => setOpenCriarUsuario(true)} 
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-4 py-2 text-sm font-medium flex items-center gap-2 w-full sm:w-auto"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Criar Usuário
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </Card>
 
-        <Card className="transition-smooth">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-responsive-lg">
-              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-              Usuários da Unidade
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loadingUsuarios ? (
-              <div className="text-center py-8 text-muted-foreground text-xs sm:text-sm">
-                Carregando usuários...
+          {/* Card: Integração API Pública */}
+          <Card className="bg-card rounded-xl border border-border shadow-sm">
+            <div className="px-6 py-4 border-b border-border flex items-center gap-2">
+              <Webhook className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <h2 className="font-semibold text-base">Integração API Pública</h2>
+                <p className="text-sm text-muted-foreground">Gerencie seu token de integração</p>
               </div>
-            ) : usuarios.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-xs sm:text-sm">
-                Nenhum usuário encontrado
-              </div>
-            ) : (
-              <div className="space-y-2 sm:space-y-3">
-                {usuarios.map((usuario) => (
-                  <div
-                    key={usuario.id}
-                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
-                  >
-                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                      <AvatarFallback className="bg-blue-300/50 text-primary font-semibold text-xs sm:text-sm">
-                        {getInitials(usuario.nome)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="text-xs sm:text-sm font-medium truncate">{usuario.nome}</p>
-                        {!usuario.ativo && (
-                          <Badge variant="secondary" className="text-[10px]">Inativo</Badge>
-                        )}
-                      </div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{usuario.email}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-[10px]">
-                          {usuario.perfilNome}
-                        </Badge>
-                        <span className="text-[10px] text-muted-foreground">
-                          {formatDate(usuario.dataCriacao)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="transition-smooth lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-responsive-lg">
-              <Webhook className="h-4 w-4 sm:h-5 sm:w-5" />
-              Integração API Pública
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-4">
+            </div>
+            
+            <div className="px-6 py-5 space-y-5">
               <div className="text-sm text-muted-foreground">
                 Gere um token de API para integrar serviços externos e automatizar suas operações. 
                 O token identifica as requisições como sendo do seu usuário e unidade.
               </div>
 
               {!apiToken ? (
-                <div className="flex items-center justify-center p-6 border rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer" onClick={handleGerarToken}>
+                <div 
+                  className="flex items-center justify-center p-6 border border-border border-dashed rounded-lg bg-muted/20 hover:bg-muted/50 transition-colors cursor-pointer" 
+                  onClick={handleGerarToken}
+                >
                   <div className="flex flex-col items-center gap-2 text-primary">
                     <Key className="h-8 w-8" />
                     <span className="font-semibold text-sm">{gerandoToken ? "Gerando..." : "Gerar API Key"}</span>
@@ -399,139 +363,227 @@ export default function ConfiguracoesPage() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <Label>Token de Acesso</Label>
-                  <div className="flex gap-2 items-center">
-                    <div className="relative flex-1">
-                      <Input 
-                        value={showToken ? apiToken : maskToken(apiToken)} 
-                        readOnly 
-                        className="font-mono pr-10 bg-accent/30"
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Token de Acesso</label>
+                  <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                    <div className="relative flex-1 w-full bg-muted rounded-lg px-4 py-3 flex items-center justify-between overflow-hidden">
+                      <span className="font-mono text-sm break-all pt-0.5">
+                        {showToken ? apiToken : maskToken(apiToken)}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-transparent -mr-2 shrink-0"
+                        onClick={() => setShowToken(!showToken)}
+                      >
+                        {showToken ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                      </Button>
+                    </div>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <Button variant="secondary" onClick={copyToken} className="flex-1 sm:flex-none">
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copiar
+                      </Button>
+                      <Button variant="destructive" onClick={() => setOpenRevogarToken(true)} className="flex-1 sm:flex-none bg-destructive px-3">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Revogar
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Card: Configurações de E-mail */}
+          <Card className="bg-card rounded-xl border border-border shadow-sm">
+            <div className="px-6 py-4 border-b border-border flex items-center gap-2">
+              <Send className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <h2 className="font-semibold text-base">Configurações de E-mail</h2>
+                <p className="text-sm text-muted-foreground">Configurar e-mail remetente e senha de app</p>
+              </div>
+            </div>
+            
+            <div className="px-6 py-5 space-y-5">
+              <div className="text-sm text-muted-foreground">
+                Configure o e-mail remetente usado para envio de notificações e comunicações automáticas do sistema.
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="email-remetente" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    E-mail remetente
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="email-remetente"
+                      type="email"
+                      placeholder="seuemail@gmail.com"
+                      value={emailRemetente}
+                      onChange={(e) => setEmailRemetente(e.target.value)}
+                      disabled={salvandoEmail || hasSenhaApp}
+                      className="pl-9 h-10"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="email-senha-app" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    Senha de app
+                  </Label>
+                  {hasSenhaApp ? (
+                    <div className="flex items-center gap-2 h-10 px-4 rounded-md border border-green-200 dark:border-green-900/50 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400">
+                      <CheckCircle2 className="h-4 w-4 shrink-0" />
+                      <span className="text-sm font-medium">Configurada e funcionante</span>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <Key className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="email-senha-app"
+                        type={showEmailSenha ? "text" : "password"}
+                        placeholder="xxxx xxxx xxxx xxxx"
+                        value={emailSenhaApp}
+                        onChange={(e) => setEmailSenhaApp(e.target.value)}
+                        disabled={salvandoEmail}
+                        maxLength={50}
+                        className="pl-9 pr-10 h-10"
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-0 top-0 h-full hover:bg-transparent"
-                        onClick={() => setShowToken(!showToken)}
+                        className="absolute right-0 top-0 h-10 w-10 hover:bg-transparent"
+                        onClick={() => setShowEmailSenha(!showEmailSenha)}
+                        tabIndex={-1}
                       >
-                        {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showEmailSenha ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                       </Button>
                     </div>
-                    <Button variant="secondary" onClick={copyToken}>
-                      <Copy className="h-4 w-4 sm:mr-2" />
-                      <span className="hidden sm:inline">Copiar</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex gap-3">
+                <Info className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+                <div className="text-sm text-blue-800 dark:text-blue-200 flex flex-col gap-2">
+                  <span className="font-semibold">O que é a senha de app?</span>
+                  <span>
+                    É uma senha gerada pelo Google para aplicativos. Sua senha normal do Gmail <strong>não funciona</strong> aqui.
+                  </span>
+                  <span>
+                    Você pode gerar sua senha de app acessando diretamente o link abaixo:
+                  </span>
+                  <a
+                    href="https://myaccount.google.com/apppasswords"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 w-fit bg-blue-100 dark:bg-blue-900/50 px-2.5 py-1 rounded-md transition-colors"
+                  >
+                    🔗 myaccount.google.com/apppasswords
+                  </a>
+                  <span className="mt-1">
+                    Para mais informações detalhadas sobre como funciona,{" "}
+                    <a
+                      href="https://support.google.com/accounts/answer/185833?hl=pt-BR"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline font-medium hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      leia a documentação oficial do Google
+                    </a>.
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-border">
+                {hasSenhaApp ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={handleDeletarEmailConfig}
+                      disabled={salvandoEmail}
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border w-full sm:w-auto"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      <span>{salvandoEmail ? "Removendo..." : "Remover"}</span>
                     </Button>
-                    <Button variant="destructive" onClick={() => setOpenRevogarToken(true)}>
-                      <Trash2 className="h-4 w-4 sm:mr-2" />
-                      <span className="hidden sm:inline">Revogar</span>
+                    <Button disabled className="w-full sm:w-auto bg-primary text-primary-foreground opacity-70">
+                      <Send className="h-4 w-4 mr-2" />
+                      Configuração Salva
                     </Button>
-                  </div>
+                  </>
+                ) : (
+                  <Button
+                    onClick={handleSalvarEmailConfig}
+                    disabled={salvandoEmail}
+                    className="bg-primary text-primary-foreground w-full sm:w-auto"
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    {salvandoEmail ? "Salvando..." : "Salvar"}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Coluna Secundária (Direita) */}
+        <div className="w-full min-w-0">
+          <Card className="bg-card rounded-xl border border-border shadow-sm sticky top-6">
+            <div className="px-6 py-4 border-b border-border flex items-center gap-2">
+              <Users className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <h2 className="font-semibold text-base">Usuários da Unidade</h2>
+                <p className="text-sm text-muted-foreground">Pessoas com acesso</p>
+              </div>
+            </div>
+            
+            <div className="px-0 py-0 pb-2">
+              {loadingUsuarios ? (
+                <div className="text-center py-8 text-muted-foreground text-sm">
+                  Carregando usuários...
+                </div>
+              ) : usuarios.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground text-sm">
+                  Nenhum usuário encontrado
+                </div>
+              ) : (
+                <div className="divide-y divide-border">
+                  {usuarios.map((usuario) => (
+                    <div
+                      key={usuario.id}
+                      className="flex items-center gap-3 px-5 py-4"
+                    >
+                      <Avatar className="h-10 w-10 shrink-0">
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                          {getInitials(usuario.nome)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-semibold truncate text-foreground leading-none">{usuario.nome}</p>
+                          {!usuario.ativo && (
+                            <Badge variant="secondary" className="text-[10px] h-4 px-1 rounded-sm shrink-0">Inativo</Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">{usuario.email}</p>
+                      </div>
+                      <div className="ml-auto shrink-0 pl-2">
+                        <span className="bg-secondary text-secondary-foreground text-xs font-medium rounded-full px-2 py-0.5 inline-block">
+                          {usuario.perfilNome}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
-
-      {/* Seção: Configurações de E-mail */}
-      <Card className="transition-smooth">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-responsive-lg">
-            <Send className="h-4 w-4 sm:h-5 sm:w-5" />
-            Configurações de E-mail
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-5">
-            <div className="text-sm text-muted-foreground">
-              Configure o e-mail remetente usado para envio de notificações e comunicações automáticas do sistema.
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* E-mail remetente */}
-              <div className="grid gap-2">
-                <Label htmlFor="email-remetente" className="text-xs sm:text-sm">
-                  <Mail className="inline-block h-4 w-4 mr-1" />
-                  E-mail remetente
-                </Label>
-                <Input
-                  id="email-remetente"
-                  type="email"
-                  placeholder="seuemail@gmail.com"
-                  value={emailRemetente}
-                  onChange={(e) => setEmailRemetente(e.target.value)}
-                  disabled={salvandoEmail}
-                  className="text-xs sm:text-sm"
-                />
-              </div>
-
-              {/* Senha de app */}
-              <div className="grid gap-2">
-                <Label htmlFor="email-senha-app" className="text-xs sm:text-sm">
-                  <Key className="inline-block h-4 w-4 mr-1" />
-                  Senha de app
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="email-senha-app"
-                    type={showEmailSenha ? "text" : "password"}
-                    placeholder="xxxx xxxx xxxx xxxx"
-                    value={emailSenhaApp}
-                    onChange={(e) => setEmailSenhaApp(e.target.value)}
-                    disabled={salvandoEmail}
-                    className="text-xs sm:text-sm pr-10"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full hover:bg-transparent"
-                    onClick={() => setShowEmailSenha(!showEmailSenha)}
-                    tabIndex={-1}
-                  >
-                    {showEmailSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Texto explicativo */}
-            <div className="rounded-md border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-4 flex gap-3">
-              <Info className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-800 dark:text-blue-200 flex flex-col gap-1">
-                <span className="font-semibold">O que é a senha de app?</span>
-                <span>
-                  É uma senha gerada pelo Google para aplicativos. Sua senha normal do Gmail <strong>não funciona</strong> aqui.
-                </span>
-                <span>
-                  Para gerar: acesse{" "}
-                  <a
-                    href="https://myaccount.google.com/security"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline font-medium hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    myaccount.google.com
-                  </a>
-                  {" "}→ Segurança → Verificação em duas etapas → Senhas de app → Selecione{" "}
-                  <strong>"Outro"</strong> e gere.
-                </span>
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <Button
-                onClick={handleSalvarEmailConfig}
-                disabled={salvandoEmail}
-                className="w-full sm:w-auto"
-              >
-                <Send className="h-4 w-4 mr-2" />
-                {salvandoEmail ? "Salvando..." : "Salvar configurações de e-mail"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       <Dialog open={openCriarUsuario} onOpenChange={setOpenCriarUsuario}>
         <DialogContent>
@@ -581,8 +633,6 @@ export default function ConfiguracoesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-
 
       <Dialog open={openRevogarToken} onOpenChange={setOpenRevogarToken}>
         <DialogContent>

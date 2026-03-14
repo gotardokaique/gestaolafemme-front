@@ -3,38 +3,36 @@
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 export function ModeToggle() {
-  const { setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+
+  // Evita hydration mismatch — só renderiza o ícone correto no cliente
+  React.useEffect(() => setMounted(true), [])
+
+  const toggle = () => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark")
+  }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={toggle}
+      aria-label="Alternar tema"
+      className="h-9 w-9 rounded-md border-primary/50 hover:border-primary transition-colors"
+    >
+      {mounted ? (
+        resolvedTheme === "dark" ? (
+          <Sun className="h-[1.1rem] w-[1.1rem] transition-all" />
+        ) : (
+          <Moon className="h-[1.1rem] w-[1.1rem] transition-all" />
+        )
+      ) : (
+        <span className="h-[1.1rem] w-[1.1rem]" />
+      )}
+    </Button>
   )
 }

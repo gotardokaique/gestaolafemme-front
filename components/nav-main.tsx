@@ -2,6 +2,7 @@
 
 import { ChevronRight, type LucideIcon, Users, Warehouse, Tags, Package, ShoppingBag, ShoppingCart, Wallet, LayoutDashboard, ArrowLeftRight, Settings } from "lucide-react"
 import { usePathname } from "next/navigation"
+import Link from "next/link"
 
 import {
   Collapsible,
@@ -85,7 +86,7 @@ export function NavMain({
                     return (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <a
+                          <Link
                             href={subItem.url}
                             className={
                               isActive
@@ -107,7 +108,7 @@ export function NavMain({
                             >
                               {subItem.title}
                             </span>
-                          </a>
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     )
