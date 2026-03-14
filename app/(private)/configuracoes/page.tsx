@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Copy, CheckCircle2, Users, Key, Webhook, Trash2, Eye, EyeOff } from "lucide-react"
+import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, Key, Webhook, Trash2, Eye, EyeOff, Send, Info } from "lucide-react"
 
 const UserMeSchema = z.object({
   id: z.number(),
@@ -55,13 +55,7 @@ export default function ConfiguracoesPage() {
   const [novoUsuarioNome, setNovoUsuarioNome] = React.useState("")
   const [novoUsuarioEmail, setNovoUsuarioEmail] = React.useState("")
 
-  const [showCredenciais, setShowCredenciais] = React.useState(false)
-  const [credenciaisGeradas, setCredenciaisGeradas] = React.useState<{
-    email: string
-    senhaTemporaria: string
-    mensagem: string
-  } | null>(null)
-  const [copiado, setCopiado] = React.useState(false)
+
 
   const [usuarios, setUsuarios] = React.useState<UsuarioUnidade[]>([])
   const [loadingUsuarios, setLoadingUsuarios] = React.useState(true)
@@ -70,6 +64,12 @@ export default function ConfiguracoesPage() {
   const [gerandoToken, setGerandoToken] = React.useState(false)
   const [showToken, setShowToken] = React.useState(false)
   const [openRevogarToken, setOpenRevogarToken] = React.useState(false)
+
+  // --- Email Config ---
+  const [emailRemetente, setEmailRemetente] = React.useState("")
+  const [emailSenhaApp, setEmailSenhaApp] = React.useState("")
+  const [showEmailSenha, setShowEmailSenha] = React.useState(false)
+  const [salvandoEmail, setSalvandoEmail] = React.useState(false)
 
   React.useEffect(() => {
     let mounted = true
@@ -111,6 +111,16 @@ export default function ConfiguracoesPage() {
           }
         } catch (e: any) {
         }
+
+        try {
+          const resEmail = await api.get("/configuracao/email")
+          if (!mounted) return
+          const dataEmail = resEmail.data as { emailRemetente?: string } | undefined
+          if (resEmail.success && dataEmail?.emailRemetente) {
+            setEmailRemetente(dataEmail.emailRemetente)
+          }
+        } catch (e: any) {
+        }
       })()
     return () => {
       mounted = false
@@ -132,13 +142,11 @@ export default function ConfiguracoesPage() {
         },
       })
 
-      if (res.success && res.data) {
-        setCredenciaisGeradas(res.data as { email: string; senhaTemporaria: string; mensagem: string })
+      if (res.success) {
         setOpenCriarUsuario(false)
-        setShowCredenciais(true)
         setNovoUsuarioNome("")
         setNovoUsuarioEmail("")
-        toast.success("Usuário criado com sucesso!")
+        toast.success("Usuário criado! As credenciais de acesso foram enviadas ao e-mail cadastrado.")
 
         try {
           const resUsuarios = await api.get("/users/usuarios-unidade")
@@ -157,16 +165,7 @@ export default function ConfiguracoesPage() {
     }
   }
 
-  const copiarCredenciais = () => {
-    if (!credenciaisGeradas) return
 
-    const texto = `Email: ${credenciaisGeradas.email}\nSenha Temporária: ${credenciaisGeradas.senhaTemporaria}\n\n${credenciaisGeradas.mensagem}`
-    navigator.clipboard.writeText(texto)
-    setCopiado(true)
-    toast.success("Credenciais copiadas!")
-
-    setTimeout(() => setCopiado(false), 2000)
-  }
 
   const getInitials = (nome: string) => {
     const names = nome.trim().split(' ')
@@ -221,6 +220,32 @@ export default function ConfiguracoesPage() {
     if (!apiToken) return
     navigator.clipboard.writeText(apiToken)
     toast.success("Token copiado para a área de transferência!")
+  }
+
+  const handleSalvarEmailConfig = async () => {
+    if (!emailRemetente.trim()) {
+      toast.error("Informe o e-mail remetente")
+      return
+    }
+    setSalvandoEmail(true)
+    try {
+      const res = await api.put("/configuracao/email", {
+        body: {
+          emailRemetente: emailRemetente.trim(),
+          emailSenhaApp: emailSenhaApp,
+        },
+      })
+      if (res.success) {
+        toast.success("Configurações de e-mail salvas com sucesso!")
+        setEmailSenhaApp("")
+      } else {
+        toast.error(res.message || "Erro ao salvar configurações de e-mail")
+      }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao salvar configurações de e-mail")
+    } finally {
+      setSalvandoEmail(false)
+    }
   }
 
   return (
@@ -408,12 +433,112 @@ export default function ConfiguracoesPage() {
         </Card>
       </div>
 
+      {/* Seção: Configurações de E-mail */}
+      <Card className="transition-smooth">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-responsive-lg">
+            <Send className="h-4 w-4 sm:h-5 sm:w-5" />
+            Configurações de E-mail
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-5">
+            <div className="text-sm text-muted-foreground">
+              Configure o e-mail remetente usado para envio de notificações e comunicações automáticas do sistema.
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* E-mail remetente */}
+              <div className="grid gap-2">
+                <Label htmlFor="email-remetente" className="text-xs sm:text-sm">
+                  <Mail className="inline-block h-4 w-4 mr-1" />
+                  E-mail remetente
+                </Label>
+                <Input
+                  id="email-remetente"
+                  type="email"
+                  placeholder="seuemail@gmail.com"
+                  value={emailRemetente}
+                  onChange={(e) => setEmailRemetente(e.target.value)}
+                  disabled={salvandoEmail}
+                  className="text-xs sm:text-sm"
+                />
+              </div>
+
+              {/* Senha de app */}
+              <div className="grid gap-2">
+                <Label htmlFor="email-senha-app" className="text-xs sm:text-sm">
+                  <Key className="inline-block h-4 w-4 mr-1" />
+                  Senha de app
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="email-senha-app"
+                    type={showEmailSenha ? "text" : "password"}
+                    placeholder="xxxx xxxx xxxx xxxx"
+                    value={emailSenhaApp}
+                    onChange={(e) => setEmailSenhaApp(e.target.value)}
+                    disabled={salvandoEmail}
+                    className="text-xs sm:text-sm pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full hover:bg-transparent"
+                    onClick={() => setShowEmailSenha(!showEmailSenha)}
+                    tabIndex={-1}
+                  >
+                    {showEmailSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Texto explicativo */}
+            <div className="rounded-md border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-4 flex gap-3">
+              <Info className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+              <div className="text-sm text-blue-800 dark:text-blue-200 flex flex-col gap-1">
+                <span className="font-semibold">O que é a senha de app?</span>
+                <span>
+                  É uma senha gerada pelo Google para aplicativos. Sua senha normal do Gmail <strong>não funciona</strong> aqui.
+                </span>
+                <span>
+                  Para gerar: acesse{" "}
+                  <a
+                    href="https://myaccount.google.com/security"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline font-medium hover:text-blue-600 dark:hover:text-blue-400"
+                  >
+                    myaccount.google.com
+                  </a>
+                  {" "}→ Segurança → Verificação em duas etapas → Senhas de app → Selecione{" "}
+                  <strong>"Outro"</strong> e gere.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <Button
+                onClick={handleSalvarEmailConfig}
+                disabled={salvandoEmail}
+                className="w-full sm:w-auto"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                {salvandoEmail ? "Salvando..." : "Salvar configurações de e-mail"}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Dialog open={openCriarUsuario} onOpenChange={setOpenCriarUsuario}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Criar Novo Usuário</DialogTitle>
             <DialogDescription>
-              Preencha os dados do novo usuário. Uma senha temporária será gerada automaticamente.
+              Preencha os dados do novo usuário. Uma senha temporária será gerada e enviada automaticamente para o e-mail informado.
             </DialogDescription>
           </DialogHeader>
 
@@ -457,66 +582,7 @@ export default function ConfiguracoesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog para exibir credenciais geradas */}
-      <Dialog open={showCredenciais} onOpenChange={setShowCredenciais}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-500" />
-              Usuário Criado com Sucesso!
-            </DialogTitle>
-            <DialogDescription>
-              Copie as credenciais abaixo e envie de forma segura ao novo usuário.
-            </DialogDescription>
-          </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label>Email</Label>
-              <Input value={credenciaisGeradas?.email || ""} readOnly />
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Senha Temporária</Label>
-              <Input
-                value={credenciaisGeradas?.senhaTemporaria || ""}
-                readOnly
-                className="font-mono text-lg font-bold"
-              />
-            </div>
-
-            <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 p-3 border border-amber-200 dark:border-amber-900">
-              <p className="text-sm text-amber-800 dark:text-amber-200">
-                {credenciaisGeradas?.mensagem}
-              </p>
-            </div>
-          </div>
-
-          <DialogFooter className="sm:justify-between">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={copiarCredenciais}
-              className="gap-2"
-            >
-              {copiado ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4" />
-                  Copiado!
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  Copiar Credenciais
-                </>
-              )}
-            </Button>
-            <Button onClick={() => setShowCredenciais(false)}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={openRevogarToken} onOpenChange={setOpenRevogarToken}>
         <DialogContent>
