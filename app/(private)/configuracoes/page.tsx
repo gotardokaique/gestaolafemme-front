@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Copy, CheckCircle2, Users } from "lucide-react"
+import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Copy, CheckCircle2, Users, Key, Webhook, Trash2, Eye, EyeOff } from "lucide-react"
 
 const UserMeSchema = z.object({
   id: z.number(),
@@ -66,6 +66,11 @@ export default function ConfiguracoesPage() {
   const [usuarios, setUsuarios] = React.useState<UsuarioUnidade[]>([])
   const [loadingUsuarios, setLoadingUsuarios] = React.useState(true)
 
+  const [apiToken, setApiToken] = React.useState<string | null>(null)
+  const [gerandoToken, setGerandoToken] = React.useState(false)
+  const [showToken, setShowToken] = React.useState(false)
+  const [openRevogarToken, setOpenRevogarToken] = React.useState(false)
+
   React.useEffect(() => {
     let mounted = true
       ; (async () => {
@@ -95,6 +100,16 @@ export default function ConfiguracoesPage() {
         } finally {
           if (!mounted) return
           setLoadingUsuarios(false)
+        }
+
+        try {
+          const resToken = await api.get("/configuracao/token")
+          if (!mounted) return
+          const dataToken = resToken.data as { token?: string } | undefined
+          if (resToken.success && dataToken?.token) {
+            setApiToken(dataToken.token)
+          }
+        } catch (e: any) {
         }
       })()
     return () => {
@@ -164,6 +179,48 @@ export default function ConfiguracoesPage() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  }
+
+  const maskToken = (token: string) => {
+    if (!token || token.length < 12) return token
+    return `${token.substring(0, 8)}...${token.substring(token.length - 4)}`
+  }
+
+  const handleGerarToken = async () => {
+    setGerandoToken(true)
+    try {
+      const res = await api.post("/configuracao/token")
+      const dataToken = res.data as { token?: string } | undefined
+      if (res.success && dataToken?.token) {
+        setApiToken(dataToken.token)
+        toast.success("API Token gerado com sucesso!")
+        setShowToken(true)
+      } else {
+        toast.error(res.message || "Erro ao gerar token")
+      }
+    } catch (e: any) {
+      toast.error("Erro ao gerar token")
+    } finally {
+      setGerandoToken(false)
+    }
+  }
+
+  const handleRevogarToken = async () => {
+    try {
+      await api.delete("/configuracao/token")
+      setApiToken(null)
+      setShowToken(false)
+      setOpenRevogarToken(false)
+      toast.success("Token revogado com sucesso!")
+    } catch (e: any) {
+      toast.error("Erro ao revogar token")
+    }
+  }
+
+  const copyToken = () => {
+    if (!apiToken) return
+    navigator.clipboard.writeText(apiToken)
+    toast.success("Token copiado para a área de transferência!")
   }
 
   return (
@@ -293,6 +350,62 @@ export default function ConfiguracoesPage() {
             )}
           </CardContent>
         </Card>
+
+        <Card className="transition-smooth lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-responsive-lg">
+              <Webhook className="h-4 w-4 sm:h-5 sm:w-5" />
+              Integração API Pública
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-4">
+              <div className="text-sm text-muted-foreground">
+                Gere um token de API para integrar serviços externos e automatizar suas operações. 
+                O token identifica as requisições como sendo do seu usuário e unidade.
+              </div>
+
+              {!apiToken ? (
+                <div className="flex items-center justify-center p-6 border rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer" onClick={handleGerarToken}>
+                  <div className="flex flex-col items-center gap-2 text-primary">
+                    <Key className="h-8 w-8" />
+                    <span className="font-semibold text-sm">{gerandoToken ? "Gerando..." : "Gerar API Key"}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <Label>Token de Acesso</Label>
+                  <div className="flex gap-2 items-center">
+                    <div className="relative flex-1">
+                      <Input 
+                        value={showToken ? apiToken : maskToken(apiToken)} 
+                        readOnly 
+                        className="font-mono pr-10 bg-accent/30"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 h-full hover:bg-transparent"
+                        onClick={() => setShowToken(!showToken)}
+                      >
+                        {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    <Button variant="secondary" onClick={copyToken}>
+                      <Copy className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Copiar</span>
+                    </Button>
+                    <Button variant="destructive" onClick={() => setOpenRevogarToken(true)}>
+                      <Trash2 className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Revogar</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Dialog open={openCriarUsuario} onOpenChange={setOpenCriarUsuario}>
@@ -400,6 +513,25 @@ export default function ConfiguracoesPage() {
             </Button>
             <Button onClick={() => setShowCredenciais(false)}>
               Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openRevogarToken} onOpenChange={setOpenRevogarToken}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Revogar API Key</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja revogar este token? Qualquer integração ou aplicativo usando esta chave perderá acesso imediatamente. Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenRevogarToken(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleRevogarToken}>
+              Sim, Revogar Token
             </Button>
           </DialogFooter>
         </DialogContent>
