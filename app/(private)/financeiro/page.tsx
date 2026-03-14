@@ -20,7 +20,7 @@ import {
 import { formatCurrency, formatDateBR, cn } from "@/lib/utils"
 import { financeiroApi } from "@/services/financeiro/financeiro.api"
 import type { FinanceiroResumo, LancamentoFinanceiro } from "@/services/financeiro/financeiro.schemas"
-import { toast } from "@/components/ui/sonner"
+import toast from "react-hot-toast"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { LancamentoFinanceiroCreateSheet } from "./components/financeiro-create-sheet"

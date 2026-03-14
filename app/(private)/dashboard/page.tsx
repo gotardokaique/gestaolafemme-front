@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { toast } from "sonner"
+import toast from "react-hot-toast"
 import Link from "next/link"
 import { DollarSign, ShoppingBag, ShoppingCart, TrendingUp, TrendingDown, Package, Tag, Truck } from "lucide-react"
 

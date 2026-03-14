@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { toast } from "@/components/ui/sonner"
+import toast from "react-hot-toast"
 import { ApiError, api } from "@/lib/api"
 
 type AuthContextType = {

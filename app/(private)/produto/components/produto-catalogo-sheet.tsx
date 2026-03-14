@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import { FilePreview } from "@/components/ui/file-preview"
 import { FileField, type FileData } from "@/components/fields/file-field"
-import { toast } from "@/components/ui/sonner"
+import toast from "react-hot-toast"
 import { Images, Plus, Trash2, X, Loader2 } from "lucide-react"
 
 import { filePreviewApi } from "@/services/file-preview/file-preview.api"

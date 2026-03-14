@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { CheckCircle } from "lucide-react";
 import { categoriaProdutoApi } from "@/services/categoria-produto/categoria-produto.api";
 import type { CategoriaProduto } from "@/services/categoria-produto/categoria-produto.schemas";
-import { toast } from "@/components/ui/sonner";
+import toast from "react-hot-toast";
 
 type CategoriaFieldProps = {
   value?: number;

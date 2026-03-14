@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { toast } from "@/components/ui/sonner"
+import toast from "react-hot-toast"
 import { vendaApi } from "@/services/venda/venda.api"
 import type { Venda } from "@/services/venda/venda.schemas"
 

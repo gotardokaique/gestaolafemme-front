@@ -20,7 +20,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { toast } from "@/components/ui/sonner"
+import toast from "react-hot-toast"
 import {
   Package,
   Tag,

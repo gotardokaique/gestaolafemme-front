@@ -21,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { toast } from "@/components/ui/sonner"
+import toast from "react-hot-toast"
 import { AuthServiceError, login } from "@/services/authservice"
 import { api } from "@/lib/api"
 import { useRouter } from "next/navigation"
@@ -56,7 +56,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         const checkResponse = await api.get("/users/check-trocar-senha")
 
         if (checkResponse.success && (checkResponse.data as any)?.precisaTrocarSenha) {
-          toast.warning("Você precisa alterar sua senha por questões de segurança")
+          toast("Você precisa alterar sua senha por questões de segurança", { icon: '⚠️' })
           setShowTrocarSenha(true)
           setIsLoading(false)
           return

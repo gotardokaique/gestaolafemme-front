@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { CheckCircle } from "lucide-react";
 import { produtoApi } from "@/services/produto/produto.api";
 import type { Produto } from "@/services/produto/produto.schemas";
-import { toast } from "@/components/ui/sonner";
+import toast from "react-hot-toast";
 
 type ProdutoFieldProps = {
   value?: number;

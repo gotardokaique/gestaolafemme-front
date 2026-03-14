@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { CheckCircle } from "lucide-react";
 import { fornecedorApi } from "@/services/fornecedor/fornecedor.api";
 import type { Fornecedor } from "@/services/fornecedor/fornecedor.schemas";
-import { toast } from "@/components/ui/sonner";
+import toast from "react-hot-toast";
 
 type FornecedorFieldProps = {
   value?: number;

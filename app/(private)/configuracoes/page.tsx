@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { z } from "zod"
-import { toast } from "@/components/ui/sonner"
+import toast from "react-hot-toast"
 import { api } from "@/lib/api"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"

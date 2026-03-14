@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { useSpeechToText } from "@/hooks/use-speech-to-text"
-import { toast } from "sonner"
+import toast from "react-hot-toast"
 import { Mic, MicOff, Loader2 } from "lucide-react"
 
 type VoiceMicButtonProps = {
