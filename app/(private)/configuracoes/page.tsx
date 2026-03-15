@@ -133,6 +133,17 @@ export default function ConfiguracoesPage() {
         } catch (e: any) {
         }
       })()
+
+    // Verifica se voltou de uma conexão bem-sucedida
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get("success") === "mp_connected") {
+        toast.success("Mercado Pago conectado com sucesso!")
+        // Limpa a URL
+        window.history.replaceState({}, document.title, window.location.pathname)
+      }
+    }
+
     return () => {
       mounted = false
     }
@@ -563,11 +574,15 @@ export default function ConfiguracoesPage() {
 
               {mpConfig?.conectado ? (
                 <div className="flex flex-col gap-4">
-                  <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-900/50 rounded-lg p-4 flex gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    <div className="flex flex-col gap-1">
-                      <span className="text-sm font-semibold text-green-800 dark:text-green-400">Integração Ativa</span>
-                      <span className="text-xs text-green-700 dark:text-green-500">Sua conta do Mercado Pago está conectada e pronta para uso.</span>
+                  <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-900/50 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex gap-3 items-center">
+                      <div className="bg-emerald-100 dark:bg-emerald-900/50 p-2 rounded-full">
+                        <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-400">Configurada e funcionante</span>
+                        <span className="text-xs text-emerald-700/70 dark:text-emerald-500/70">Sua conta está integrada ao sistema</span>
+                      </div>
                     </div>
                   </div>
 
@@ -575,9 +590,9 @@ export default function ConfiguracoesPage() {
                     <Button 
                       onClick={handleConnectMercadoPago}
                       variant="outline"
-                      className="w-full sm:w-auto border-[#009EE3] text-[#009EE3] hover:bg-sky-50 dark:hover:bg-sky-950/30 flex items-center gap-2"
+                      className="w-full sm:w-auto h-11 px-6 border-[#009EE3] text-[#009EE3] hover:bg-sky-50 dark:hover:bg-sky-950/30 font-semibold flex items-center gap-2"
                     >
-                      Alterar Conta
+                      Alterar Conta Conectada
                       <ExternalLink className="h-4 w-4" />
                     </Button>
                   </div>
