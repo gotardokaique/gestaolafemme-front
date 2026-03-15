@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, Key, Webhook, Trash2, Eye, EyeOff, Send, Info, Copy, CheckCircle2 } from "lucide-react"
+import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, Key, Webhook, Trash2, Eye, EyeOff, Send, Info, Copy, CheckCircle2, CreditCard, ExternalLink } from "lucide-react"
 import { ModeToggle } from "@/components/mode-togle"
 
 const UserMeSchema = z.object({
@@ -263,6 +263,12 @@ export default function ConfiguracoesPage() {
     } finally {
       setSalvandoEmail(false)
     }
+  }
+  
+  const handleConnectMercadoPago = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"
+    const oauthUrl = apiUrl.replace("/api/v1", "/mp/autorizar")
+    window.location.href = oauthUrl
   }
 
   return (
@@ -525,6 +531,41 @@ export default function ConfiguracoesPage() {
                     {salvandoEmail ? "Salvando..." : "Salvar"}
                   </Button>
                 )}
+              </div>
+            </div>
+          </Card>
+
+          {/* Card: Mercado Pago */}
+          <Card className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+            <div className="h-1.5 bg-[#009EE3]"></div>
+            <div className="px-6 py-4 border-b border-border flex items-center gap-2">
+              <CreditCard className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <h2 className="font-semibold text-base">Mercado Pago</h2>
+                <p className="text-sm text-muted-foreground">Integração para pagamentos</p>
+              </div>
+            </div>
+            
+            <div className="px-6 py-5 space-y-5">
+              <p className="text-sm text-muted-foreground">
+                Permita que o La Femme utilize sua conta Mercado Pago para receber pagamentos automaticamente dos seus clientes.
+              </p>
+
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg p-4 flex gap-3">
+                <Info className="h-5 w-5 text-[#009EE3] shrink-0 mt-0.5" />
+                <div className="text-sm text-blue-800 dark:text-blue-200">
+                  Ao clicar no botão abaixo, você será redirecionado para o ambiente seguro do Mercado Pago para autorizar a conexão.
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <Button 
+                  onClick={handleConnectMercadoPago}
+                  className="bg-[#009EE3] hover:bg-[#0086C3] text-white w-full sm:w-auto h-11 px-6 font-semibold flex items-center gap-2"
+                >
+                  Conectar Mercado Pago
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </Card>
