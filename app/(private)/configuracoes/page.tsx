@@ -23,6 +23,27 @@ import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, K
 import { ModeToggle } from "@/components/mode-togle"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 
+function AlertasDeIntegração() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  React.useEffect(() => {
+    const success = searchParams.get("success")
+    const error = searchParams.get("error")
+
+    if (success === "mp_connected") {
+      toast.success("Mercado Pago conectado com sucesso!")
+      router.replace(pathname)
+    } else if (error) {
+      toast.error(`Erro ao conectar: ${error}`)
+      router.replace(pathname)
+    }
+  }, [searchParams, router, pathname])
+
+  return null // Este componente não renderiza nada visualmente
+}
+
 const UserMeSchema = z.object({
   id: z.number(),
   nome: z.string(),
@@ -50,17 +71,11 @@ type UsuarioUnidade = z.infer<typeof UsuarioUnidadeSchema>
 export default function ConfiguracoesPage() {
   const [loading, setLoading] = React.useState(true)
   const [me, setMe] = React.useState<UserMe | null>(null)
-  
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
 
   const [openCriarUsuario, setOpenCriarUsuario] = React.useState(false)
   const [criandoUsuario, setCriandoUsuario] = React.useState(false)
   const [novoUsuarioNome, setNovoUsuarioNome] = React.useState("")
   const [novoUsuarioEmail, setNovoUsuarioEmail] = React.useState("")
-
-
 
   const [usuarios, setUsuarios] = React.useState<UsuarioUnidade[]>([])
   const [loadingUsuarios, setLoadingUsuarios] = React.useState(true)
@@ -143,21 +158,6 @@ export default function ConfiguracoesPage() {
       mounted = false
     }
   }, [api])
-
-  // Tratamento da URL (success/error do Mercado Pago)
-  React.useEffect(() => {
-    const success = searchParams.get("success")
-    const error = searchParams.get("error")
-
-    if (success === "mp_connected") {
-      toast.success("Mercado Pago conectado com sucesso!")
-      // Limpa a URL usando next/navigation
-      router.replace(pathname)
-    } else if (error) {
-      toast.error(`Erro ao conectar: ${error}`)
-      router.replace(pathname)
-    }
-  }, [searchParams, router, pathname])
 
   const handleCriarUsuario = async () => {
     if (!novoUsuarioNome.trim() || !novoUsuarioEmail.trim()) {
@@ -295,7 +295,7 @@ export default function ConfiguracoesPage() {
       setSalvandoEmail(false)
     }
   }
-  
+
   const handleConnectMercadoPago = () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"
     const oauthUrl = apiUrl.replace("/api/v1", "/mp/autorizar")
@@ -319,7 +319,7 @@ export default function ConfiguracoesPage() {
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6 items-start">
         {/* Coluna Principal (Esquerda) */}
         <div className="w-full flex flex-col gap-6 min-w-0">
-          
+
           {/* Card: Geral */}
           <Card className="bg-card rounded-xl border border-border shadow-sm">
             <div className="px-6 py-4 border-b border-border flex items-center gap-2">
@@ -329,7 +329,7 @@ export default function ConfiguracoesPage() {
                 <p className="text-sm text-muted-foreground">Informações principais da sua conta</p>
               </div>
             </div>
-            
+
             <div className="px-6 py-6 space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-muted/50 rounded-lg px-4 py-3">
@@ -361,8 +361,8 @@ export default function ConfiguracoesPage() {
                     Gerar credenciais temporárias para um novo usuário
                   </div>
                 </div>
-                <Button 
-                  onClick={() => setOpenCriarUsuario(true)} 
+                <Button
+                  onClick={() => setOpenCriarUsuario(true)}
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-4 py-2 text-sm font-medium flex items-center gap-2 w-full sm:w-auto"
                 >
                   <UserPlus className="h-4 w-4" />
@@ -381,16 +381,16 @@ export default function ConfiguracoesPage() {
                 <p className="text-sm text-muted-foreground">Gerencie seu token de integração</p>
               </div>
             </div>
-            
+
             <div className="px-6 py-5 space-y-5">
               <div className="text-sm text-muted-foreground">
-                Gere um token de API para integrar serviços externos e automatizar suas operações. 
+                Gere um token de API para integrar serviços externos e automatizar suas operações.
                 O token identifica as requisições como sendo do seu usuário e unidade.
               </div>
 
               {!apiToken ? (
-                <div 
-                  className="flex items-center justify-center p-6 border border-border border-dashed rounded-lg bg-muted/20 hover:bg-muted/50 transition-colors cursor-pointer" 
+                <div
+                  className="flex items-center justify-center p-6 border border-border border-dashed rounded-lg bg-muted/20 hover:bg-muted/50 transition-colors cursor-pointer"
                   onClick={handleGerarToken}
                 >
                   <div className="flex flex-col items-center gap-2 text-primary">
@@ -441,7 +441,7 @@ export default function ConfiguracoesPage() {
                 <p className="text-sm text-muted-foreground">Configurar e-mail remetente e senha de app</p>
               </div>
             </div>
-            
+
             <div className="px-6 py-5 space-y-5">
               <div className="text-sm text-muted-foreground">
                 Configure o e-mail remetente usado para envio de notificações e comunicações automáticas do sistema.
@@ -576,7 +576,7 @@ export default function ConfiguracoesPage() {
                 <p className="text-sm text-muted-foreground">Integração para pagamentos</p>
               </div>
             </div>
-            
+
             <div className="px-6 py-5 space-y-5">
               <p className="text-sm text-muted-foreground">
                 Permita que o La Femme utilize sua conta Mercado Pago para receber pagamentos automaticamente dos seus clientes.
@@ -599,7 +599,7 @@ export default function ConfiguracoesPage() {
                   </div>
 
                   <div className="flex justify-end pt-2">
-                    <Button 
+                    <Button
                       variant="outline"
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border w-full sm:w-auto"
                       onClick={() => toast.error("Função de desconectar será implementada em breve.")}
@@ -619,7 +619,7 @@ export default function ConfiguracoesPage() {
                   </div>
 
                   <div className="flex justify-end pt-2 text-[#009EE3]">
-                    <Button 
+                    <Button
                       onClick={handleConnectMercadoPago}
                       className="bg-[#009EE3] hover:bg-[#0086C3] text-white w-full sm:w-auto h-11 px-6 font-semibold flex items-center gap-2"
                     >
@@ -643,7 +643,7 @@ export default function ConfiguracoesPage() {
                 <p className="text-sm text-muted-foreground">Pessoas com acesso</p>
               </div>
             </div>
-            
+
             <div className="px-0 py-0 pb-2">
               {loadingUsuarios ? (
                 <div className="text-center py-8 text-muted-foreground text-sm">
