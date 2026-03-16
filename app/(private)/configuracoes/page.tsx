@@ -19,8 +19,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, Key, Webhook, Trash2, Eye, EyeOff, Send, Info, Copy, CheckCircle2, CreditCard, ExternalLink } from "lucide-react"
+import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, Key, Webhook, Trash2, Eye, EyeOff, Send, Info, Copy, CheckCircle2, CreditCard, ExternalLink, XCircle } from "lucide-react"
 import { ModeToggle } from "@/components/mode-togle"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 
 const UserMeSchema = z.object({
   id: z.number(),
@@ -49,6 +50,10 @@ type UsuarioUnidade = z.infer<typeof UsuarioUnidadeSchema>
 export default function ConfiguracoesPage() {
   const [loading, setLoading] = React.useState(true)
   const [me, setMe] = React.useState<UserMe | null>(null)
+  
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
 
   const [openCriarUsuario, setOpenCriarUsuario] = React.useState(false)
   const [criandoUsuario, setCriandoUsuario] = React.useState(false)
@@ -134,20 +139,25 @@ export default function ConfiguracoesPage() {
         }
       })()
 
-    // Verifica se voltou de uma conexão bem-sucedida
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search)
-      if (urlParams.get("success") === "mp_connected") {
-        toast.success("Mercado Pago conectado com sucesso!")
-        // Limpa a URL
-        window.history.replaceState({}, document.title, window.location.pathname)
-      }
-    }
-
     return () => {
       mounted = false
     }
-  }, [])
+  }, [api])
+
+  // Tratamento da URL (success/error do Mercado Pago)
+  React.useEffect(() => {
+    const success = searchParams.get("success")
+    const error = searchParams.get("error")
+
+    if (success === "mp_connected") {
+      toast.success("Mercado Pago conectado com sucesso!")
+      // Limpa a URL usando next/navigation
+      router.replace(pathname)
+    } else if (error) {
+      toast.error(`Erro ao conectar: ${error}`)
+      router.replace(pathname)
+    }
+  }, [searchParams, router, pathname])
 
   const handleCriarUsuario = async () => {
     if (!novoUsuarioNome.trim() || !novoUsuarioEmail.trim()) {
@@ -574,26 +584,28 @@ export default function ConfiguracoesPage() {
 
               {mpConfig?.conectado ? (
                 <div className="flex flex-col gap-4">
-                  <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-900/50 rounded-lg p-4 flex items-center justify-between">
-                    <div className="flex gap-3 items-center">
-                      <div className="bg-emerald-100 dark:bg-emerald-900/50 p-2 rounded-full">
-                        <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-400">Configurada e funcionante</span>
-                        <span className="text-xs text-emerald-700/70 dark:text-emerald-500/70">Sua conta está integrada ao sistema</span>
-                      </div>
+                  <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-900/50 rounded-lg p-4 flex gap-3">
+                    <div className="bg-emerald-100 dark:bg-emerald-900/50 p-2 rounded-full h-fit">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-400">
+                        Sua conta do Mercado Pago está conectada e pronta para receber pagamentos automáticos.
+                      </span>
+                      <span className="text-xs text-emerald-700/70 dark:text-emerald-500/70">
+                        Os pagamentos das ordens de serviço agora serão liquidados diretamente na sua conta.
+                      </span>
                     </div>
                   </div>
 
                   <div className="flex justify-end pt-2">
                     <Button 
-                      onClick={handleConnectMercadoPago}
                       variant="outline"
-                      className="w-full sm:w-auto h-11 px-6 border-[#009EE3] text-[#009EE3] hover:bg-sky-50 dark:hover:bg-sky-950/30 font-semibold flex items-center gap-2"
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border w-full sm:w-auto"
+                      onClick={() => toast.error("Função de desconectar será implementada em breve.")}
                     >
-                      Alterar Conta Conectada
-                      <ExternalLink className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Desconectar Conta
                     </Button>
                   </div>
                 </div>
@@ -606,7 +618,7 @@ export default function ConfiguracoesPage() {
                     </div>
                   </div>
 
-                  <div className="flex justify-end pt-2">
+                  <div className="flex justify-end pt-2 text-[#009EE3]">
                     <Button 
                       onClick={handleConnectMercadoPago}
                       className="bg-[#009EE3] hover:bg-[#0086C3] text-white w-full sm:w-auto h-11 px-6 font-semibold flex items-center gap-2"
