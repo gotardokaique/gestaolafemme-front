@@ -5,6 +5,10 @@ export const VendaSchema = z.object({
   dataVenda: z.string(),
   valorTotal: z.number(),
   formaPagamento: z.string(),
+  situacao: z.object({
+    id: z.number(),
+    nome: z.string(),
+  }).optional().nullable(),
 })
 
 export type Venda = z.infer<typeof VendaSchema>

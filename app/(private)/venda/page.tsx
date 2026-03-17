@@ -11,13 +11,37 @@ import {
 import { TableData } from "@/components/table-data/table-data"
 import { useVendasTable } from "./components/use-vendas-table"
 import { VendaCreateSheet } from "./components/venda-create-sheet"
-import { ShoppingCart, Calendar, Banknote, User } from "lucide-react"
+import { ShoppingCart, Calendar, Banknote, User, CheckCircle2, XCircle, Eye } from "lucide-react"
 import { formatCurrency, formatDateBR } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 import type { Venda } from "@/services/venda/venda.schemas"
 
+const getStatusBadge = (situacao: Venda['situacao']) => {
+  if (!situacao) return <Badge variant="secondary">Desconhecido</Badge>
+  if (situacao.id === 1) return <Badge className="bg-amber-500 text-white hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-700 border-none shadow-sm">{situacao.nome}</Badge>
+  if (situacao.id === 2) return <Badge className="bg-emerald-500 text-white hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 border-none shadow-sm">{situacao.nome}</Badge>
+  if (situacao.id === 3) return <Badge className="bg-rose-500 text-white hover:bg-rose-600 dark:bg-rose-600 dark:hover:bg-rose-700 border-none shadow-sm">{situacao.nome}</Badge>
+  return <Badge variant="secondary">{situacao.nome}</Badge>
+}
+
 export default function VendasPage() {
-  const { data, loading, reload } = useVendasTable()
+  const { data, loading, reload, handleConcluir, handleCancelar, processingId } = useVendasTable()
+
+  const [confirmState, setConfirmState] = React.useState<{ open: boolean; type: "concluir" | "cancelar" | null; id: number | null }>({
+    open: false,
+    type: null,
+    id: null,
+  })
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
@@ -40,7 +64,7 @@ export default function VendasPage() {
           <TableData<Venda>
             data={data}
             emptyText={loading ? "Carregando..." : "Nenhuma venda cadastrada."}
-            actionsKey="id"
+            actionsKey="acoes"
           >
             <TableData.Columns>
               <TableData.Column<Venda>
@@ -87,10 +111,104 @@ export default function VendasPage() {
                   </span>
                 )}
               />
+              <TableData.Column<Venda>
+                name={"situacao" as any}
+                label="Situação"
+                render={(_, row) => getStatusBadge(row.situacao)}
+              />
+
+              <TableData.Column<Venda>
+                name={"acoes" as any}
+                label=""
+                render={(_, row) => (
+                  <div className="flex items-center gap-1 justify-end">
+                    {row.situacao?.id === 1 ? (
+                      <>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          title="Concluir"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setConfirmState({ open: true, type: "concluir", id: row.id });
+                          }}
+                          disabled={processingId === row.id}
+                          className="h-8 w-8 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          title="Cancelar"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setConfirmState({ open: true, type: "cancelar", id: row.id });
+                          }}
+                          disabled={processingId === row.id}
+                          className="h-8 w-8 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30"
+                        >
+                          <XCircle className="h-4 w-4" />
+                        </Button>
+                      </>
+                    ) : (
+                      <Button type="button" variant="ghost" size="icon" title="Visualizar" disabled className="h-8 w-8">
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              />
             </TableData.Columns>
           </TableData>
         </CardContent>
       </Card>
+
+      <Dialog open={confirmState.open} onOpenChange={(val) => setConfirmState((prev) => ({ ...prev, open: val }))}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {confirmState.type === "concluir" ? "Confirmar Conclusão" : "Confirmar Cancelamento"}
+            </DialogTitle>
+            <DialogDescription className="text-center w-fit">
+              {confirmState.type === "concluir"
+                ? "Deseja concluir essa compra?"
+                : "Deseja cancelar essa compra?"}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setConfirmState({ open: false, type: null, id: null })}
+              disabled={processingId === confirmState.id}
+            >
+              Voltar
+            </Button>
+            <Button
+              type="button"
+              variant={confirmState.type === "concluir" ? "default" : "destructive"}
+              disabled={processingId === confirmState.id}
+              className={confirmState.type === "concluir" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}
+              onClick={async () => {
+                if (!confirmState.id) return
+                if (confirmState.type === "concluir") {
+                  await handleConcluir(confirmState.id)
+                } else {
+                  await handleCancelar(confirmState.id)
+                }
+                setConfirmState({ open: false, type: null, id: null })
+              }}
+            >
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

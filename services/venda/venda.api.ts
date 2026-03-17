@@ -36,4 +36,18 @@ export const vendaApi = {
     })
     return res
   },
+
+  concluir: async (id: number) => {
+    const res = await api.put(`/vendas/${id}/concluir`, {
+      dataSchema: EmptyDataSchema,
+    })
+    return res
+  },
+
+  cancelar: async (id: number) => {
+    const res = await api.put(`/vendas/${id}/cancelar`, {
+      dataSchema: EmptyDataSchema,
+    })
+    return res
+  },
 }

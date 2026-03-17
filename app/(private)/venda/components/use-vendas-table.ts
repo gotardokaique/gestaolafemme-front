@@ -8,6 +8,7 @@ import type { Venda } from "@/services/venda/venda.schemas"
 export function useVendasTable() {
   const [data, setData] = React.useState<Venda[]>([])
   const [loading, setLoading] = React.useState(true)
+  const [processingId, setProcessingId] = React.useState<number | null>(null)
 
   const load = React.useCallback(async () => {
     setLoading(true)
@@ -22,6 +23,32 @@ export function useVendasTable() {
     }
   }, [])
 
+  const handleConcluir = async (id: number) => {
+    setProcessingId(id)
+    try {
+      await vendaApi.concluir(id)
+      toast.success("Venda concluída com sucesso!")
+      load()
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao concluir venda.")
+    } finally {
+      setProcessingId(null)
+    }
+  }
+
+  const handleCancelar = async (id: number) => {
+    setProcessingId(id)
+    try {
+      await vendaApi.cancelar(id)
+      toast.success("Venda cancelada com sucesso!")
+      load()
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao cancelar venda.")
+    } finally {
+      setProcessingId(null)
+    }
+  }
+
   React.useEffect(() => {
     load()
   }, [load])
@@ -29,6 +56,9 @@ export function useVendasTable() {
   return {
     data,
     loading,
+    processingId,
     reload: load,
+    handleConcluir,
+    handleCancelar,
   }
 }
