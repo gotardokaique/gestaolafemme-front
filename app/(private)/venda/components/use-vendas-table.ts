@@ -49,6 +49,19 @@ export function useVendasTable() {
     }
   }
 
+  const handleGerarLink = async (id: number) => {
+    setProcessingId(id)
+    try {
+      const res = await vendaApi.gerarLinkPagamento(id)
+      return res
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao gerar link de pagamento.")
+      return null
+    } finally {
+      setProcessingId(null)
+    }
+  }
+
   React.useEffect(() => {
     load()
   }, [load])
@@ -60,5 +73,6 @@ export function useVendasTable() {
     reload: load,
     handleConcluir,
     handleCancelar,
+    handleGerarLink,
   }
 }

@@ -11,10 +11,14 @@ import {
 import { TableData } from "@/components/table-data/table-data"
 import { useVendasTable } from "./components/use-vendas-table"
 import { VendaCreateSheet } from "./components/venda-create-sheet"
-import { ShoppingCart, Calendar, Banknote, User, CheckCircle2, XCircle, Eye } from "lucide-react"
+import { ShoppingCart, Calendar, Banknote, User, CheckCircle2, XCircle, Eye, Link, ExternalLink, Loader2, Copy } from "lucide-react"
 import { formatCurrency, formatDateBR } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import toast from "react-hot-toast"
+import { vendaApi } from "@/services/venda/venda.api"
 import {
   Dialog,
   DialogContent,
@@ -35,13 +39,45 @@ const getStatusBadge = (situacao: Venda['situacao']) => {
 }
 
 export default function VendasPage() {
-  const { data, loading, reload, handleConcluir, handleCancelar, processingId } = useVendasTable()
+  const { data, loading, reload, handleConcluir, handleCancelar, handleGerarLink, processingId } = useVendasTable()
 
   const [confirmState, setConfirmState] = React.useState<{ open: boolean; type: "concluir" | "cancelar" | null; id: number | null }>({
     open: false,
     type: null,
     id: null,
   })
+
+  const [paymentState, setPaymentState] = React.useState<{ open: boolean; venda: Venda | null; link: string | null }>({
+    open: false,
+    venda: null,
+    link: null,
+  })
+
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout
+    if (paymentState.open && paymentState.venda) {
+      interval = setInterval(async () => {
+        try {
+          const atualizada = await vendaApi.getById(paymentState.venda!.id)
+          if (atualizada && atualizada.situacao?.id !== 1) {
+            if (atualizada.situacao?.id === 2) {
+              toast.success("Pagamento confirmado automaticamente!")
+            }
+            if (atualizada.situacao?.id === 3) {
+              toast.error("Venda foi cancelada.")
+            }
+            setPaymentState(prev => ({ ...prev, open: false }))
+            reload()
+          }
+        } catch (e) {
+          console.error("Erro no polling", e)
+        }
+      }, 5000)
+    }
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [paymentState.open, paymentState.venda, reload])
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
@@ -128,16 +164,19 @@ export default function VendasPage() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          title="Concluir"
-                          onClick={(e) => {
+                          title="Gerar Link de Pagamento"
+                          onClick={async (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            setConfirmState({ open: true, type: "concluir", id: row.id });
+                            const res = await handleGerarLink(row.id);
+                            if (res?.paymentLink) {
+                                setPaymentState({ open: true, venda: row, link: res.paymentLink });
+                            }
                           }}
                           disabled={processingId === row.id}
                           className="h-8 w-8 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
                         >
-                          <CheckCircle2 className="h-4 w-4" />
+                          {processingId === row.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link className="h-4 w-4" />}
                         </Button>
                         <Button
                           type="button"
@@ -205,6 +244,70 @@ export default function VendasPage() {
               }}
             >
               Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={paymentState.open} onOpenChange={(open) => {
+        if (!open) setPaymentState({ open: false, venda: null, link: null });
+      }}>
+        <DialogContent className="max-w-md w-[95%] rounded-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-emerald-600 dark:text-emerald-500">
+              <Banknote className="h-5 w-5" />
+              Link de Pagamento Gerado
+            </DialogTitle>
+            <DialogDescription>
+              Envie este link para o cliente realizar o pagamento.
+            </DialogDescription>
+          </DialogHeader>
+
+          {paymentState.venda && (
+            <div className="space-y-4 py-2">
+              <div className="bg-muted p-3 rounded-lg text-sm space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Cliente:</span>
+                  <span className="font-medium text-foreground">Consumidor Final</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Valor total:</span>
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-500">{formatCurrency(paymentState.venda.valorTotal)}</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Link do Mercado Pago</Label>
+                <div className="flex gap-2">
+                  <Input readOnly value={paymentState.link || ""} className="font-mono text-sm bg-muted/50" />
+                  <Button variant="secondary" size="icon" onClick={() => {
+                    if (paymentState.link) {
+                      navigator.clipboard.writeText(paymentState.link);
+                      toast.success("Copiado!");
+                    }
+                  }}>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                  <Button variant="default" size="icon" onClick={() => {
+                    if (paymentState.link) {
+                      window.open(paymentState.link, "_blank");
+                    }
+                  }}>
+                    <ExternalLink className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 text-sm bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-500 rounded-lg">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Aguardando confirmação do pagamento...</span>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setPaymentState({ open: false, venda: null, link: null })}>
+              Fechar
             </Button>
           </DialogFooter>
         </DialogContent>

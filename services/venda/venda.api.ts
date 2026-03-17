@@ -50,4 +50,11 @@ export const vendaApi = {
     })
     return res
   },
+
+  gerarLinkPagamento: async (id: number): Promise<{ paymentLink: string, preferenceId: string }> => {
+    const res = await api.post(`/vendas/${id}/gerar-link-pagamento`, {
+      dataSchema: z.object({ paymentLink: z.string(), preferenceId: z.string() }),
+    });
+    return res.data!;
+  },
 }
