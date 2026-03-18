@@ -51,9 +51,15 @@ export const vendaApi = {
     return res
   },
 
-  gerarLinkPagamento: async (id: number): Promise<{ paymentLink: string, preferenceId: string }> => {
+  gerarLinkPagamento: async (id: number): Promise<{ tipo: string, paymentLink?: string | null, preferenceId?: string | null, qrCode?: string | null, qrCodeBase64?: string | null }> => {
     const res = await api.post(`/vendas/${id}/gerar-link-pagamento`, {
-      dataSchema: z.object({ paymentLink: z.string(), preferenceId: z.string() }),
+      dataSchema: z.object({ 
+          tipo: z.string(),
+          paymentLink: z.string().nullable().optional(), 
+          preferenceId: z.string().nullable().optional(),
+          qrCode: z.string().nullable().optional(),
+          qrCodeBase64: z.string().nullable().optional()
+      }),
     });
     return res.data!;
   },

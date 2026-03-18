@@ -90,7 +90,8 @@ export default function ConfiguracoesPage() {
   const [showEmailSenha, setShowEmailSenha] = React.useState(false)
   const [salvandoEmail, setSalvandoEmail] = React.useState(false)
   const [hasSenhaApp, setHasSenhaApp] = React.useState(false)
-  const [mpConfig, setMpConfig] = React.useState<{ conectado: boolean } | null>(null)
+  const [mpConfig, setMpConfig] = React.useState<{ conectado: boolean, tipoPagamento?: "CHECKOUT" | "PIX" } | null>(null)
+  const [salvandoTipoPagamento, setSalvandoTipoPagamento] = React.useState(false)
 
   React.useEffect(() => {
     let mounted = true
@@ -300,6 +301,25 @@ export default function ConfiguracoesPage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"
     const oauthUrl = apiUrl.replace("/api/v1", "/mp/autorizar")
     window.location.href = oauthUrl
+  }
+
+  const handleAtualizarTipoPagamento = async (tipo: "CHECKOUT" | "PIX") => {
+    setSalvandoTipoPagamento(true)
+    try {
+      const res = await api.put("/configuracao/mercado-pago/tipo-pagamento", {
+        body: { tipoPagamento: tipo },
+      })
+      if (res.success) {
+        toast.success("Tipo de pagamento atualizado!")
+        setMpConfig(prev => prev ? { ...prev, tipoPagamento: tipo } : null)
+      } else {
+        toast.error(res.message || "Erro ao atualizar")
+      }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao atualizar tipo de pagamento")
+    } finally {
+      setSalvandoTipoPagamento(false)
+    }
   }
 
   return (
@@ -595,6 +615,50 @@ export default function ConfiguracoesPage() {
                       <span className="text-xs text-emerald-700/70 dark:text-emerald-500/70">
                         Os pagamentos das ordens de serviço agora serão liquidados diretamente na sua conta.
                       </span>
+                    </div>
+                  </div>
+
+                  <div className="border border-border dark:border-gray-800 rounded-lg p-4 flex flex-col gap-3 mt-2">
+                    <h3 className="text-sm font-semibold">Tipo de Integração</h3>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Escolha como a tela de pagamento será apresentada para o cliente final.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <label className={`flex gap-3 p-3 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors ${mpConfig.tipoPagamento === "CHECKOUT" || !mpConfig.tipoPagamento ? 'border-primary ring-1 ring-primary/20 bg-primary/5 dark:bg-primary/10' : 'border-border'}`}>
+                        <div className="flex h-5 items-center">
+                          <input
+                            type="radio"
+                            name="tipoPagamento"
+                            value="CHECKOUT"
+                            checked={mpConfig.tipoPagamento === "CHECKOUT" || !mpConfig.tipoPagamento}
+                            onChange={() => handleAtualizarTipoPagamento("CHECKOUT")}
+                            disabled={salvandoTipoPagamento}
+                            className="h-4 w-4 text-primary focus:ring-primary border-gray-300 dark:border-gray-600 dark:bg-gray-700"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-semibold">CHECKOUT</span>
+                          <span className="text-xs text-muted-foreground mt-0.5">Redirecionar cliente para o Mercado Pago</span>
+                        </div>
+                      </label>
+                      <label className={`flex gap-3 p-3 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors ${mpConfig.tipoPagamento === "PIX" ? 'border-primary ring-1 ring-primary/20 bg-primary/5 dark:bg-primary/10' : 'border-border'}`}>
+                        <div className="flex h-5 items-center">
+                          <input
+                            type="radio"
+                            name="tipoPagamento"
+                            value="PIX"
+                            checked={mpConfig.tipoPagamento === "PIX"}
+                            onChange={() => handleAtualizarTipoPagamento("PIX")}
+                            disabled={salvandoTipoPagamento}
+                            className="h-4 w-4 text-primary focus:ring-primary border-gray-300 dark:border-gray-600 dark:bg-gray-700"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-semibold">PIX</span>
+                          <span className="text-xs text-muted-foreground mt-0.5">Gerar QR Code Pix diretamente no sistema</span>
+                        </div>
+                      </label>
                     </div>
                   </div>
 

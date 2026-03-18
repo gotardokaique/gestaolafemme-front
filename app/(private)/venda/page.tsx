@@ -47,10 +47,13 @@ export default function VendasPage() {
     id: null,
   })
 
-  const [paymentState, setPaymentState] = React.useState<{ open: boolean; venda: Venda | null; link: string | null }>({
+  const [paymentState, setPaymentState] = React.useState<{ open: boolean; venda: Venda | null; link: string | null; qrCode: string | null; qrCodeBase64: string | null; tipo: string | null }>({
     open: false,
     venda: null,
     link: null,
+    qrCode: null,
+    qrCodeBase64: null,
+    tipo: null,
   })
 
   React.useEffect(() => {
@@ -169,8 +172,15 @@ export default function VendasPage() {
                             e.preventDefault();
                             e.stopPropagation();
                             const res = await handleGerarLink(row.id);
-                            if (res?.paymentLink) {
-                                setPaymentState({ open: true, venda: row, link: res.paymentLink });
+                            if (res) {
+                                setPaymentState({ 
+                                  open: true, 
+                                  venda: row, 
+                                  link: res.paymentLink || null,
+                                  tipo: res.tipo,
+                                  qrCode: res.qrCode || null,
+                                  qrCodeBase64: res.qrCodeBase64 || null
+                                });
                             }
                           }}
                           disabled={processingId === row.id}
@@ -250,16 +260,16 @@ export default function VendasPage() {
       </Dialog>
 
       <Dialog open={paymentState.open} onOpenChange={(open) => {
-        if (!open) setPaymentState({ open: false, venda: null, link: null });
+        if (!open) setPaymentState({ open: false, venda: null, link: null, tipo: null, qrCode: null, qrCodeBase64: null });
       }}>
         <DialogContent className="max-w-md w-[95%] rounded-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-emerald-600 dark:text-emerald-500">
               <Banknote className="h-5 w-5" />
-              Link de Pagamento Gerado
+              {paymentState.tipo === "PIX" ? "Pagamento Pix Gerado" : "Link de Pagamento Gerado"}
             </DialogTitle>
             <DialogDescription>
-              Envie este link para o cliente realizar o pagamento.
+              {paymentState.tipo === "PIX" ? "Abra o app do seu banco, acesse Pix e escaneie o QR Code" : "Envie este link para o cliente realizar o pagamento."}
             </DialogDescription>
           </DialogHeader>
 
@@ -276,27 +286,56 @@ export default function VendasPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Link do Mercado Pago</Label>
-                <div className="flex gap-2">
-                  <Input readOnly value={paymentState.link || ""} className="font-mono text-sm bg-muted/50" />
-                  <Button variant="secondary" size="icon" onClick={() => {
-                    if (paymentState.link) {
-                      navigator.clipboard.writeText(paymentState.link);
-                      toast.success("Copiado!");
-                    }
-                  }}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <Button variant="default" size="icon" onClick={() => {
-                    if (paymentState.link) {
-                      window.open(paymentState.link, "_blank");
-                    }
-                  }}>
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
+              {paymentState.tipo === "PIX" ? (
+                <div className="space-y-4 flex flex-col items-center justify-center">
+                  {paymentState.qrCodeBase64 && (
+                    <div className="p-4 bg-white rounded-xl shadow-sm border border-border flex justify-center w-fit">
+                      <img 
+                        src={`data:image/png;base64,${paymentState.qrCodeBase64}`} 
+                        alt="QR Code Pix" 
+                        className="w-48 h-48 md:w-56 md:h-56 object-contain"
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="w-full space-y-2">
+                    <Label>Código Pix Copia e Cola</Label>
+                    <div className="flex gap-2">
+                      <Input readOnly value={paymentState.qrCode || ""} className="font-mono text-xs md:text-sm bg-muted/50" />
+                      <Button variant="secondary" onClick={() => {
+                        if (paymentState.qrCode) {
+                          navigator.clipboard.writeText(paymentState.qrCode);
+                          toast.success("Código copiado!");
+                        }
+                      }}>
+                        <Copy className="h-4 w-4 mr-2" /> Copiar
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label>Link do Mercado Pago</Label>
+                  <div className="flex gap-2">
+                    <Input readOnly value={paymentState.link || ""} className="font-mono text-sm bg-muted/50" />
+                    <Button variant="secondary" size="icon" onClick={() => {
+                      if (paymentState.link) {
+                        navigator.clipboard.writeText(paymentState.link);
+                        toast.success("Copiado!");
+                      }
+                    }}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <Button variant="default" size="icon" onClick={() => {
+                      if (paymentState.link) {
+                        window.open(paymentState.link, "_blank");
+                      }
+                    }}>
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
 
               <div className="flex items-center gap-3 p-3 text-sm bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-500 rounded-lg">
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -306,7 +345,7 @@ export default function VendasPage() {
           )}
 
           <DialogFooter>
-            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setPaymentState({ open: false, venda: null, link: null })}>
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setPaymentState({ open: false, venda: null, link: null, tipo: null, qrCode: null, qrCodeBase64: null })}>
               Fechar
             </Button>
           </DialogFooter>
