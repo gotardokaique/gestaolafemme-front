@@ -453,12 +453,11 @@ function TableDataInner<TData>({
 
   return (
     <div className="flex flex-col gap-4 min-h-0">
-      {/* Top bar: botão Filtros (só aparece se existir TableData.Filters) */}
       {filtersExtracted ? (
         <div className="flex items-center justify-end">
           <Dialog open={openFilters} onOpenChange={setOpenFilters}>
             <DialogTrigger asChild>
-              <Button variant="secondary" type="button">
+              <Button className="bg-blue-500 text-white" variant="secondary" type="button">
                 <FilterIcon className="mr-2 h-4 w-4" />
                 Filtros
               </Button>
@@ -511,10 +510,10 @@ function TableDataInner<TData>({
                 <TabsTrigger
                   key={key}
                   value={key}
-                  className="gap-2 px-4 data-[state=active]:bg-blue-400 data-[state=active]:text-white data-[state=active]:border-blue-500 dark:data-[state=active]:bg-blue-400 dark:data-[state=active]:text-white dark:data-[state=active]:border-blue-300"
+                  className="gap-2 px-4 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-400 dark:data-[state=active]:text-white "
                 >
                   {t.props.label}
-                  <span className="flex h-4 min-w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold text-inherit px-1">
+                  <span className="flex h-4 min-w-5 items-center justify-center rounded-full bg-white/30 text-[10px] font-bold text-inherit px-1">
                     {count}
                   </span>
                 </TabsTrigger>

@@ -50,13 +50,13 @@
   --radius: 0.75rem;
   /* Modern Light Theme - Vibrant & Clean */
   --background: #F8FAFC;
-  --foreground: #0F172A;
-  --card: #FFFFFF;
+  --foreground: #0f1218;
+  --card: #ece8e8;
   --card-foreground: #0F172A;
   --popover: #FFFFFF;
   --popover-foreground: #0F172A;
   /* Vibrant Blue Primary */
-  --primary: #3B82F6;
+  --primary: #1256c3;
   --primary-foreground: #FFFFFF;
   /* Soft Gray Secondary */
   --secondary: #F1F5F9;
@@ -92,15 +92,15 @@
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
+  --background: oklch(18.309% 0.00406 285.925);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
+  --card: oklch(24.15% 0.00305 16.873);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.92 0.004 286.32);
   --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
+  --secondary: oklch(52.18% 0.00471 286.055);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.274 0.006 286.033);
   --muted-foreground: oklch(0.705 0.015 286.067);
@@ -129,12 +129,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
 @layer utilities {
+
   /* Responsive Container Padding */
   .container-padding {
     @apply px-4 sm:px-6 lg:px-8;

@@ -66,7 +66,7 @@ function TabsTrigger({
       className={cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring relative inline-flex h-[calc(100%-1px)] items-center justify-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium whitespace-nowrap transition-all group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         // Estado inativo: bg-card com bordas
-        "bg-card text-muted-foreground border border-gray-300 dark:border-gray-600 hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-700",
+        " text-muted-foreground border border-gray-300 dark:border-gray-600 hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-700",
         // Estado ativo: azul claro com texto branco
         "data-[state=active]:bg-blue-400 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:border-blue-500 dark:data-[state=active]:border-blue-300 data-[state=active]:shadow-sm",
         // Variante line
