@@ -22,6 +22,8 @@ import {
 import { Building, Mail, User, UserCheck, UserCog, Settings2, UserPlus, Users, Key, Webhook, Trash2, Eye, EyeOff, Send, Info, Copy, CheckCircle2, CreditCard, ExternalLink, XCircle } from "lucide-react"
 import { ModeToggle } from "@/components/mode-togle"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 function AlertasDeIntegração() {
   const searchParams = useSearchParams()
@@ -79,6 +81,11 @@ export default function ConfiguracoesPage() {
 
   const [usuarios, setUsuarios] = React.useState<UsuarioUnidade[]>([])
   const [loadingUsuarios, setLoadingUsuarios] = React.useState(true)
+
+  const [criandoUnidade, setCriandoUnidade] = React.useState(false)
+  const [novaUnidadeNome, setNovaUnidadeNome] = React.useState("")
+  const [novaUnidadeEmail, setNovaUnidadeEmail] = React.useState("")
+  const [novaUnidadePlano, setNovaUnidadePlano] = React.useState("BASICO")
 
   const [apiToken, setApiToken] = React.useState<string | null>(null)
   const [gerandoToken, setGerandoToken] = React.useState(false)
@@ -198,7 +205,37 @@ export default function ConfiguracoesPage() {
     }
   }
 
+  const handleCriarUnidade = async () => {
+    if (novaUnidadeNome.trim() === "" || novaUnidadeEmail.trim() === "" || novaUnidadePlano === "") {
+      toast.error("Preencha todos os campos da unidade")
+      return
+    }
 
+    setCriandoUnidade(true)
+    try {
+      const res = await api.post("/admin/unidade", {
+        body: {
+          nome: novaUnidadeNome.trim(),
+          email: novaUnidadeEmail.trim(),
+          plano: novaUnidadePlano,
+        },
+      })
+
+      if (res.success) {
+        setOpenCriarUsuario(false)
+        setNovaUnidadeNome("")
+        setNovaUnidadeEmail("")
+        setNovaUnidadePlano("BASICO")
+        toast.success("Unidade criada com sucesso!")
+      } else {
+        toast.error(res.message || "Erro ao criar unidade")
+      }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao criar unidade")
+    } finally {
+      setCriandoUnidade(false)
+    }
+  }
 
   const getInitials = (nome: string) => {
     const names = nome.trim().split(' ')
@@ -376,9 +413,13 @@ export default function ConfiguracoesPage() {
 
               <div className="border-t border-border pt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
                 <div className="flex flex-col">
-                  <div className="font-medium text-sm">Criar Novo Usuário</div>
+                  <div className="font-medium text-sm">
+                    {me?.email === "kaiquecgotardo@gmail.com" ? "Criar Unidade ou Usuário" : "Criar Novo Usuário"}
+                  </div>
                   <div className="text-muted-foreground text-sm">
-                    Gerar credenciais temporárias para um novo usuário
+                    {me?.email === "kaiquecgotardo@gmail.com" 
+                      ? "Gerar nova unidade / tenant do sistema ou novo usuário"
+                      : "Gerar credenciais temporárias para um novo usuário"}
                   </div>
                 </div>
                 <Button
@@ -386,7 +427,7 @@ export default function ConfiguracoesPage() {
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-4 py-2 text-sm font-medium flex items-center gap-2 w-full sm:w-auto"
                 >
                   <UserPlus className="h-4 w-4" />
-                  Criar Usuário
+                  {me?.email === "kaiquecgotardo@gmail.com" ? "Criar Unidade/Usuário" : "Criar Usuário"}
                 </Button>
               </div>
             </div>
@@ -753,51 +794,151 @@ export default function ConfiguracoesPage() {
       </div>
 
       <Dialog open={openCriarUsuario} onOpenChange={setOpenCriarUsuario}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Criar Novo Usuário</DialogTitle>
-            <DialogDescription>
-              Preencha os dados do novo usuário. Uma senha temporária será gerada e enviada automaticamente para o e-mail informado.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className={me?.email === "kaiquecgotardo@gmail.com" ? "max-w-md p-0 overflow-hidden" : ""}>
+          {me?.email === "kaiquecgotardo@gmail.com" ? (
+            <Tabs defaultValue="usuario" className="w-full">
+              <div className="px-6 pt-6 pb-2">
+                <DialogHeader>
+                  <DialogTitle>Criar Cadastro</DialogTitle>
+                  <DialogDescription>
+                    Selecione se deseja criar um usuário comum ou uma nova unidade de tenant.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-4">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="usuario">Usuário</TabsTrigger>
+                    <TabsTrigger value="unidade">Nova Unidade</TabsTrigger>
+                  </TabsList>
+                </div>
+              </div>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="nome">Nome Completo</Label>
-              <Input
-                id="nome"
-                placeholder="Ex: João Silva"
-                value={novoUsuarioNome}
-                onChange={(e) => setNovoUsuarioNome(e.target.value)}
-                disabled={criandoUsuario}
-              />
+              <div className="px-6 pb-6">
+                <TabsContent value="usuario" className="mt-0 outline-none">
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="nomeUsuario">Nome Completo</Label>
+                      <Input
+                        id="nomeUsuario"
+                        placeholder="Ex: João Silva"
+                        value={novoUsuarioNome}
+                        onChange={(e) => setNovoUsuarioNome(e.target.value)}
+                        disabled={criandoUsuario}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="emailUsuario">Email</Label>
+                      <Input
+                        id="emailUsuario"
+                        type="email"
+                        placeholder="Ex: joao@exemplo.com"
+                        value={novoUsuarioEmail}
+                        onChange={(e) => setNovoUsuarioEmail(e.target.value)}
+                        disabled={criandoUsuario}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <Button variant="outline" onClick={() => setOpenCriarUsuario(false)} disabled={criandoUsuario}>
+                      Cancelar
+                    </Button>
+                    <Button onClick={handleCriarUsuario} disabled={criandoUsuario}>
+                      {criandoUsuario ? "Criando..." : "Criar Usuário"}
+                    </Button>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="unidade" className="mt-0 outline-none">
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="nomeUnidade">Nome da Unidade</Label>
+                      <Input
+                        id="nomeUnidade"
+                        placeholder="Ex: La Femme SP"
+                        value={novaUnidadeNome}
+                        onChange={(e) => setNovaUnidadeNome(e.target.value)}
+                        disabled={criandoUnidade}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="emailResp">Email do Responsável</Label>
+                      <Input
+                        id="emailResp"
+                        type="email"
+                        placeholder="Ex: admin@lafemmesp.com"
+                        value={novaUnidadeEmail}
+                        onChange={(e) => setNovaUnidadeEmail(e.target.value)}
+                        disabled={criandoUnidade}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>Plano</Label>
+                      <Select value={novaUnidadePlano} onValueChange={setNovaUnidadePlano} disabled={criandoUnidade}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um plano" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="BASICO">Básico</SelectItem>
+                          <SelectItem value="PROFISSIONAL">Profissional</SelectItem>
+                          <SelectItem value="PREMIUM">Premium</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <Button variant="outline" onClick={() => setOpenCriarUsuario(false)} disabled={criandoUnidade}>
+                      Cancelar
+                    </Button>
+                    <Button onClick={handleCriarUnidade} disabled={criandoUnidade}>
+                      {criandoUnidade ? "Criando..." : "Criar Unidade"}
+                    </Button>
+                  </div>
+                </TabsContent>
+              </div>
+            </Tabs>
+          ) : (
+            <div className="p-6">
+              <DialogHeader>
+                <DialogTitle>Criar Novo Usuário</DialogTitle>
+                <DialogDescription>
+                  Preencha os dados do novo usuário. Uma senha temporária será gerada e enviada automaticamente para o e-mail informado.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="grid gap-4 py-4 mt-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="nome">Nome Completo</Label>
+                  <Input
+                    id="nome"
+                    placeholder="Ex: João Silva"
+                    value={novoUsuarioNome}
+                    onChange={(e) => setNovoUsuarioNome(e.target.value)}
+                    disabled={criandoUsuario}
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Ex: joao@exemplo.com"
+                    value={novoUsuarioEmail}
+                    onChange={(e) => setNovoUsuarioEmail(e.target.value)}
+                    disabled={criandoUsuario}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <Button variant="outline" onClick={() => setOpenCriarUsuario(false)} disabled={criandoUsuario}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleCriarUsuario} disabled={criandoUsuario}>
+                  {criandoUsuario ? "Criando..." : "Criar Usuário"}
+                </Button>
+              </div>
             </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Ex: joao@exemplo.com"
-                value={novoUsuarioEmail}
-                onChange={(e) => setNovoUsuarioEmail(e.target.value)}
-                disabled={criandoUsuario}
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setOpenCriarUsuario(false)}
-              disabled={criandoUsuario}
-            >
-              Cancelar
-            </Button>
-            <Button onClick={handleCriarUsuario} disabled={criandoUsuario}>
-              {criandoUsuario ? "Criando..." : "Criar Usuário"}
-            </Button>
-          </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
 
