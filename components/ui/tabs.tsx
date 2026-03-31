@@ -26,12 +26,12 @@ function Tabs({
 }
 
 const tabsListVariants = cva(
-  "rounded-lg p-[3px] group-data-[orientation=horizontal]/tabs:h-9 data-[variant=line]:rounded-none group/tabs-list text-muted-foreground inline-flex w-fit items-center justify-center group-data-[orientation=vertical]/tabs:h-fit group-data-[orientation=vertical]/tabs:flex-col",
+  "rounded-lg p-1.5 group-data-[orientation=horizontal]/tabs:h-10 data-[variant=line]:rounded-none group/tabs-list text-muted-foreground inline-flex w-fit items-center justify-center group-data-[orientation=vertical]/tabs:h-fit group-data-[orientation=vertical]/tabs:flex-col transition-all duration-300",
   {
     variants: {
       variant: {
-        default: "bg-muted",
-        line: "gap-1 bg-transparent",
+        default: "bg-gray-200/70 dark:bg-gray-800/60 border border-gray-300/40 dark:border-gray-700/40 shadow-sm ring-1 ring-black/5 dark:ring-white/5",
+        line: "gap-1 bg-transparent border-none shadow-none ring-0",
       },
     },
     defaultVariants: {
@@ -64,9 +64,9 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring relative inline-flex h-[calc(100%-1px)] items-center justify-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium whitespace-nowrap transition-all group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        // Estado inativo: bg-card com bordas
-        " text-muted-foreground border border-gray-300 dark:border-gray-600 hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-700",
+        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring relative inline-flex h-[calc(100%-0px)] items-center justify-center gap-1.5 rounded-md px-6 py-4 text-sm font-medium whitespace-nowrap transition-all group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        // Estado inativo: transparente
+        " text-muted-foreground border-transparent hover:text-foreground hover:bg-gray-200/50 dark:hover:bg-gray-700/50",
         // Estado ativo: azul claro com texto branco
         "data-[state=active]:bg-blue-400 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:border-blue-500 dark:data-[state=active]:border-blue-300 data-[state=active]:shadow-sm",
         // Variante line
