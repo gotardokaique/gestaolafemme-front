@@ -525,10 +525,9 @@ function TableDataInner<TData>({
 
       {/* Scroll vertical interno + SEM scroll horizontal */}
       <div
-        className={`min-h-0 overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600 ${maxHeightClassName}`}
+        className={`min-h-0 overflow-y-auto overflow-x-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600 ${maxHeightClassName}`}
       >
-        <div className="overflow-y-auto overflow-x-hidden h-full">
-          <Table className="w-full table-fixed rounded-lg bg-gray-300 dark:bg-gray-700">
+        <Table className="w-full table-fixed rounded-lg bg-gray-300 dark:bg-gray-700">
             <TableHeader className="sticky top-0 z-10">
               <TableRow className=" rounded-lg !bg-gray-300 dark:!bg-gray-700 ">
                 {columnNodes.map((col) => {
@@ -585,7 +584,6 @@ function TableDataInner<TData>({
               )}
             </TableBody>
           </Table>
-        </div>
       </div>
     </div>
   )
