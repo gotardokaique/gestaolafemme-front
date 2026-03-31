@@ -69,7 +69,7 @@ export function VendaCreateSheet({ onCreated }: Props) {
 
   React.useEffect(() => {
     if (open) {
-      produtoApi.list(true).then(setProdutos).catch(() => {
+      produtoApi.list({ ativo: true }).then(setProdutos).catch(() => {
         toast.error("Erro ao carregar produtos.")
       })
     }

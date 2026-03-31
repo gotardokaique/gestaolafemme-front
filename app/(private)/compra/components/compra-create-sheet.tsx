@@ -74,7 +74,7 @@ export function CompraCreateSheet({ onCreated }: Props) {
     if (open) {
       Promise.all([
         fornecedorApi.list({ ativo: true }),
-        produtoApi.list(true)
+        produtoApi.list({ ativo: true })
       ]).then(([fornList, prodList]) => {
         setFornecedores(fornList)
         setProdutos(prodList)

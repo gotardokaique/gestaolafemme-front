@@ -41,7 +41,7 @@ export function ProdutoField({
     setIsLoading(true);
     setIsError(false);
     try {
-      const res = await produtoApi.list(true); // ativoOnly = true
+      const res = await produtoApi.list({ ativo: true });
       setData(res);
     } catch (err) {
       setIsError(true);
@@ -63,15 +63,15 @@ export function ProdutoField({
     () => options.find((p) => p.id === value)?.nome,
     [options, value]
   );
-  
+
   const displayLabel = selectedLabel ?? initialLabel;
-  
+
   const filtered = React.useMemo(() => {
     if (!open) return options;
     const q = deferredQuery.trim().toLowerCase();
     if (!q) return options;
-    return options.filter((p) => 
-      p.nome.toLowerCase().includes(q) || 
+    return options.filter((p) =>
+      p.nome.toLowerCase().includes(q) ||
       p.codigo.toLowerCase().includes(q)
     );
   }, [deferredQuery, open, options]);
