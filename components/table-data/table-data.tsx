@@ -554,110 +554,109 @@ function TableDataInner<TData>({
 
       {/* Scroll vertical interno + SEM scroll horizontal */}
       <div
-        className={`min-h-0 overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600 ${maxHeightClassName}`}
+        className={`min-h-0 overflow-y-auto overflow-x-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600 ${maxHeightClassName}`}
       >
-        <div className="overflow-y-auto overflow-x-hidden h-full">
-          <Table className="w-full table-fixed rounded-lg bg-gray-300 dark:bg-gray-700">
-            <TableHeader className="sticky top-0 z-10">
-              <TableRow className=" rounded-lg !bg-gray-300 dark:!bg-gray-700 ">
-                {columnNodes.map((col) => {
-                  const isAcoes = col.props.name === (actionsKey as any)
-                  return (
-                    <TableHead
-                      key={col.props.name}
-                      className={[
-                        "h-10 bg-muted/50 text-[11px] font-semibold uppercase tracking-wider",
-                        "text-muted-foreground first:pl-4 last:pr-4",
-                        isAcoes ? `${actionsWidthClassName} text-right` : "text-left",
-                      ].join(" ")}
-                    >
-                      <div className="truncate">{col.props.label}</div>
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {rows.length === 0 ? (
-                <TableRow className="hover:bg-transparent border-0">
-                  <TableCell colSpan={columnNodes.length} className="h-36 p-0">
-                    <div className="flex flex-col items-center justify-center gap-2.5 h-full">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                        <InboxIcon className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                      <span className="text-sm text-muted-foreground">{emptyText}</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className="border-b border-border/50 transition-colors duration-100 hover:bg-muted/40 last:border-0"
+        <Table className="w-full table-fixed rounded-lg bg-gray-300 dark:bg-gray-700">
+          <TableHeader className="sticky top-0 z-10">
+            <TableRow className=" rounded-lg !bg-gray-300 dark:!bg-gray-700 ">
+              {columnNodes.map((col) => {
+                const isAcoes = col.props.name === (actionsKey as any)
+                return (
+                  <TableHead
+                    key={col.props.name}
+                    className={[
+                      "h-10 bg-muted/50 text-[11px] font-semibold uppercase tracking-wider",
+                      "text-muted-foreground first:pl-4 last:pr-4",
+                      isAcoes ? `${actionsWidthClassName} text-right` : "text-left",
+                    ].join(" ")}
                   >
-                    {columnNodes.map((col) => {
-                      const key = col.props.name
-                      const value = row.getValue(key)
-                      const custom = col.props.render
-                      const isAcoes = key === (actionsKey as any)
+                    <div className="truncate">{col.props.label}</div>
+                  </TableHead>
+                )
+              })}
+            </TableRow>
+          </TableHeader>
 
-                      return (
-                        <TableCell
-                          key={key}
-                          className={[
-                            "py-3 text-sm first:pl-4 last:pr-4",
-                            isAcoes ? `${actionsWidthClassName} whitespace-nowrap` : "",
-                          ].join(" ")}
-                        >
-                          {isAcoes ? (
-                            <div className="flex items-center justify-end gap-1.5">
-                              {custom ? custom(value, row.original) : value != null ? String(value) : null}
-                            </div>
-                          ) : (
-                            <div className="truncate text-foreground">
-                              {custom
-                                ? custom(value, row.original)
-                                : value != null
-                                  ? String(value)
-                                  : <span className="text-muted-foreground/40">—</span>}
-                            </div>
-                          )}
-                        </TableCell>
-                      )
-                    })}
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+          <TableBody>
+            {rows.length === 0 ? (
+              <TableRow className="hover:bg-transparent border-0">
+                <TableCell colSpan={columnNodes.length} className="h-36 p-0">
+                  <div className="flex flex-col items-center justify-center gap-2.5 h-full">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                      <InboxIcon className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <span className="text-sm text-muted-foreground">{emptyText}</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className="border-b border-border/50 transition-colors duration-100 hover:bg-muted/40 last:border-0"
+                >
+                  {columnNodes.map((col) => {
+                    const key = col.props.name
+                    const value = row.getValue(key)
+                    const custom = col.props.render
+                    const isAcoes = key === (actionsKey as any)
 
-        {/* ── Footer: contagem ── */}
-        {rows.length > 0 && (
-          <div className="flex items-center justify-end pr-0.5">
-            <span className="text-xs text-muted-foreground tabular-nums">
-              {rows.length} {rows.length === 1 ? "registro" : "registros"}
-            </span>
-          </div>
-        )}
+                    return (
+                      <TableCell
+                        key={key}
+                        className={[
+                          "py-3 text-sm first:pl-4 last:pr-4",
+                          isAcoes ? `${actionsWidthClassName} whitespace-nowrap` : "",
+                        ].join(" ")}
+                      >
+                        {isAcoes ? (
+                          <div className="flex items-center justify-end gap-1.5">
+                            {custom ? custom(value, row.original) : value != null ? String(value) : null}
+                          </div>
+                        ) : (
+                          <div className="truncate text-foreground">
+                            {custom
+                              ? custom(value, row.original)
+                              : value != null
+                                ? String(value)
+                                : <span className="text-muted-foreground/40">—</span>}
+                          </div>
+                        )}
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
-      )
+
+      {/* ── Footer: contagem ── */}
+      {rows.length > 0 && (
+        <div className="flex items-center justify-end pr-0.5">
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {rows.length} {rows.length === 1 ? "registro" : "registros"}
+          </span>
+        </div>
+      )}
+    </div>
+  )
 }
 
-      /** Compound export */
-      export const TableData = Object.assign(TableDataInner, {
-        Columns,
-        Column,
-        Tabs,
-        Tab,
-        Filters,
-        Filter,
+/** Compound export */
+export const TableData = Object.assign(TableDataInner, {
+  Columns,
+  Column,
+  Tabs,
+  Tab,
+  Filters,
+  Filter,
 }) as (<TData>(props: TableDataProps<TData>) => React.ReactElement) & {
-        Columns: <TData>(props: TableDataColumnsProps<TData>) => null
-          Column:  <TData>(props: TableDataColumnProps<TData>) => null
-            Tabs:    <TData>(props: TableDataTabsProps<TData>) => null
-              Tab:     <TData>(props: TableDataTabProps<TData>) => null
-                Filters: <TData>(props: TableDataFiltersProps<TData>) => null
-                  Filter:  <TData>(props: TableDataFilterProps<TData>) => null
+  Columns: <TData>(props: TableDataColumnsProps<TData>) => null
+  Column: <TData>(props: TableDataColumnProps<TData>) => null
+  Tabs: <TData>(props: TableDataTabsProps<TData>) => null
+  Tab: <TData>(props: TableDataTabProps<TData>) => null
+  Filters: <TData>(props: TableDataFiltersProps<TData>) => null
+  Filter: <TData>(props: TableDataFilterProps<TData>) => null
 }
