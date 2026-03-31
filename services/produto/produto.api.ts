@@ -10,11 +10,24 @@ import type { FotoCatalogoRequestDTO } from "@/services/file-preview/file-previe
 
 const EmptyDataSchema = z.any()
 
+type ListArgs = {
+  ativo?: boolean
+  filterParams?: URLSearchParams | null
+}
+
+function extractF(filterParams?: URLSearchParams | null): string[] {
+  if (!filterParams) return []
+  return filterParams.getAll("f").filter(Boolean).map(String)
+}
+
 export const produtoApi = {
-  list: async (ativo?: boolean): Promise<Produto[]> => {
+  list: async ({ ativo, filterParams }: ListArgs = {}): Promise<Produto[]> => {
+    const f = extractF(filterParams)
+
     const res = await api.get("/produtos", {
       params: {
         ...(ativo !== undefined ? { ativos: ativo } : {}),
+        ...(f.length ? { f } : {}),
       },
       dataSchema: ProdutoListSchema,
     })

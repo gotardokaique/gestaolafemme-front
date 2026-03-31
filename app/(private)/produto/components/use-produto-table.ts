@@ -9,23 +9,31 @@ export function useProdutoTable() {
   const [data, setData] = React.useState<Produto[]>([])
   const [loading, setLoading] = React.useState(true)
 
-  const load = React.useCallback(async () => {
-    setLoading(true)
-    try {
-      // Carrega todos os produtos - o filtro é feito pelo TableData.Tabs no cliente
-      const res = await produtoApi.list()
-      setData(res)
-    } catch (e: any) {
-      toast.error(e?.message ?? "Não foi possível carregar produtos.")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const [filterParams, setFilterParams] = React.useState<URLSearchParams | null>(null)
+
+  const load = React.useCallback(
+    async (params?: URLSearchParams | null) => {
+      const effectiveParams = params !== undefined ? params : filterParams
+
+      setLoading(true)
+      try {
+        const res = await produtoApi.list({
+          filterParams: effectiveParams,
+        })
+        setData(res)
+      } catch (e: any) {
+        toast.error(e?.message ?? "Não foi possível carregar produtos.")
+        setData([])
+      } finally {
+        setLoading(false)
+      }
+    },
+    [filterParams]
+  )
 
   React.useEffect(() => {
-    load()
-  }, [load])
+    load(filterParams)
+  }, [filterParams, load])
 
   const handleStatusChange = async (id: number) => {
     try {
@@ -48,12 +56,21 @@ export function useProdutoTable() {
     }
   }
 
+  const applyFilters = React.useCallback((params: URLSearchParams) => {
+    setFilterParams(params)
+  }, [])
+
+  const clearFilters = React.useCallback(() => {
+    setFilterParams(null)
+  }, [])
+
   return {
     data,
     loading,
-    reload: load,
+    reload: () => load(filterParams),
     handleStatusChange,
     handleDelete,
+    applyFilters,
+    clearFilters,
   }
 }
-

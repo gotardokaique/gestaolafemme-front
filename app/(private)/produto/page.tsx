@@ -36,7 +36,8 @@ export default function ProdutosPage() {
     loading,
     reload,
     handleStatusChange,
-    handleDelete
+    handleDelete,
+    applyFilters
   } = useProdutoTable()
 
   const [editingProduto, setEditingProduto] = React.useState<Produto | null>(null)
@@ -67,7 +68,32 @@ export default function ProdutosPage() {
             data={data}
             emptyText={loading ? "Carregando..." : "Nenhum produto encontrado."}
             actionsKey="id"
+            onServerFilterChange={({ params }) => applyFilters(params)}
           >
+            {/* FILTERS (MODAL) */}
+            <TableData.Filters title="Filtros de Produtos">
+              <TableData.Filter
+                name="nome"
+                label="Nome"
+                condition={Condition.LIKE}
+                placeholder="Buscar por nome"
+              />
+
+              <TableData.Filter
+                name="descricao"
+                label="Descrição"
+                condition={Condition.LIKE}
+                placeholder="Buscar na descrição..."
+              />
+
+              <TableData.Filter
+                name="valorVenda"
+                label="Valor de Venda"
+                condition={Condition.EQUAL}
+                placeholder="Ex. 50.00"
+              />
+            </TableData.Filters>
+
             <TableData.Tabs>
               <TableData.Tab<Produto>
                 label="Ativos"
