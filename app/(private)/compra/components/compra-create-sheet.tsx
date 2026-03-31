@@ -91,6 +91,7 @@ export function CompraCreateSheet({ onCreated }: Props) {
       setOpen(false)
       toast.success(res.message || "Compra registrada com sucesso!")
       onCreated()
+      reset()
     } catch (err: any) {
       toast.error(err?.message ?? "Erro ao registrar compra.");
     }

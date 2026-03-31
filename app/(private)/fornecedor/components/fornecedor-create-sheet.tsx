@@ -65,6 +65,8 @@ export function FornecedorCreateSheet({ onCreated }: Props) {
       toast.success(successMsg)
 
       onCreated()
+      reset()
+      setTelefoneDisplay("")
     } catch (err: any) {
       toast.error(err?.message ?? "Erro ao cadastrar fornecedor.")
     }

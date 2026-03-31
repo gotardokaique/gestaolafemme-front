@@ -83,6 +83,7 @@ export function FornecedorEditSheet({ fornecedor, onUpdated }: Props) {
       setOpen(false)
       toast.success(res.message || "Fornecedor atualizado com sucesso!")
       onUpdated()
+      reset()
     } catch (err: any) {
       toast.error(err?.message ?? "Não foi possível atualizar o fornecedor.")
     }

@@ -116,6 +116,7 @@ export function ProdutoCreateSheet({ onCreated }: Props) {
       setOpen(false)
       toast.success(res.message || "Produto criado com sucesso!")
       onCreated()
+      reset()
     } catch (err: any) {
       toast.error(err?.message ?? "Erro ao criar produto.")
     }

@@ -120,6 +120,7 @@ export function ProdutoEditSheet({ produto, onOpenChange, onUpdated }: Props) {
       toast.success(res.message || "Produto atualizado com sucesso!")
       onUpdated()
       onOpenChange(false)
+      reset()
     } catch (err: any) {
       toast.error(err?.message ?? "Erro ao atualizar produto.")
     }

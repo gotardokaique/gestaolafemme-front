@@ -93,6 +93,7 @@ export function VendaCreateSheet({ onCreated }: Props) {
       setOpen(false)
       toast.success(res.message || "Venda realizada com sucesso!")
       onCreated()
+      reset()
     } catch (err: any) {
       toast.error(err?.message ?? "Erro ao realizar venda.")
     }
